@@ -17,6 +17,6 @@ struct point {
 
 int main(int argc, char **argv)
 {
-	cout << "Test" << endl;
+	cout << "Test out" << endl;
 	return 0;
 }
