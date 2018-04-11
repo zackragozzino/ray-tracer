@@ -37,9 +37,13 @@ int main(int argc, char **argv)
     //std::cout << iss.getline() << '\n';
 
     std::string word;
-    while (iss >> word) {
-        /* do stuff with word */
-        std::cout << word << std::endl;
+    while (!iss.eof()) {
+		iss >> word;
+
+		if (word == "//")
+			std::getline(iss, word);
+		else
+			std::cout << word << std::endl;
     }
 
 	return 0;
