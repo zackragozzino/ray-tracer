@@ -42,7 +42,5 @@ int main(int argc, char **argv)
         std::cout << word << std::endl;
     }
 
-
-
 	return 0;
 }
