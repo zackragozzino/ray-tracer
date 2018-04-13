@@ -1,13 +1,31 @@
 #pragma once
 
 #include <stdio.h>
+#include <iostream>
+#include "glm/glm.hpp"
 
 class GeomObject {
 
 public:
 
 	GeomObject();
-	~GeomObject();
+
+	struct Finish {
+		float ambient = 0;
+		float diffuse = 0;
+	};
+
+	glm::vec3 color;
+	Finish finish;
+
+	void parentPrint();
+
+	virtual void print() = 0;
+
+	
+	//From Ian's reference
+
+	/*~GeomObject();
 
 	void parse_pigment(FILE *fp);
 	void parse_transform(FILE *fp);
@@ -22,27 +40,5 @@ protected:
 	float tx, ty, tz;
 
 private:
-
-};
-
-class Sphere : public GeomObject { // derived (subcl)
-
-public:
-
-	Sphere();
-	~Sphere();
-
-	void parse_sphere(FILE *fp);
-
-	void parse(FILE *fp) {
-		GeomObject::parse(fp); // in java, super.parse(...)
-
-		parse_sphere(fp);
-	}
-
-private:
-
-	float cx, cy, cz;
-	float rad;
-
+*/
 };

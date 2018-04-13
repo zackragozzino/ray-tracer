@@ -2,6 +2,8 @@
 #include <string>
 #include <sstream>
 #include "GeomObject.hpp"
+#include "Sphere.hpp"
+#include "Plane.hpp"
 #include "Scene.hpp"
 #include "Camera.hpp"
 #include <vector>
@@ -29,7 +31,11 @@ private:
 
 	static Light* parseLight(std::istringstream & iss);
 
-	static GeomObject * parseSphere(std::istringstream & iss);
+	static GeomObject* parseSphere(std::istringstream & iss);
+
+	static GeomObject* parsePlane(std::istringstream & iss);
+
+	static void parseFinish(std::stringstream & iss, GeomObject & object);
 
 	static glm::vec3 Vector(std::stringstream & Stream);
 

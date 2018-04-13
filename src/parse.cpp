@@ -34,8 +34,10 @@ std::vector<GeomObject*> Parse::parseString(std::string const & filestream, Scen
 			scene.camera = parseCamera(iss);
 		else if (token == "light_source")
 			scene.lights.push_back(Parse::parseLight(iss));
-        else if (token == "sphere")
-            scene.objects.push_back(Parse::parseSphere(iss));
+		else if (token == "sphere")
+			scene.objects.push_back(Parse::parseSphere(iss));
+		else if (token == "plane")
+			scene.objects.push_back(Parse::parsePlane(iss));
 
         //else
             //std::cout << token << std::endl;
@@ -119,8 +121,106 @@ Light * Parse::parseLight(std::istringstream & iss)
 
 GeomObject * Parse::parseSphere(std::istringstream & iss)
 {
+	Sphere *sphere = new Sphere;
+	std::string token;
+	std::stringstream Stream;
+	std::stringstream Stream2;
 
-    return nullptr;
+	//Get the center vector
+	std::getline(iss, token);
+
+	
+	Stream.str(token);
+	sphere->center = Vector(Stream);
+
+	//Get the radius
+	Stream2.str(token);
+
+	Stream2.ignore(std::numeric_limits<std::streamsize>::max(), ',');
+	Stream2.ignore(std::numeric_limits<std::streamsize>::max(), ',');
+	Stream2.ignore(std::numeric_limits<std::streamsize>::max(), ',');
+	Stream2 >> token;
+	sphere->radius = strtof(token.c_str(), NULL);
+	
+
+	//Get the color vector
+	iss >> token;
+	validateToken("pigment", token);
+	std::getline(iss, token);
+	Stream.str(token);
+	sphere->color = Vector(Stream);
+
+	//Get the finish info
+	iss >> token;
+	validateToken("finish", token);
+	std::getline(iss, token);
+	Stream.str(token);
+	parseFinish(Stream, *sphere);
+
+    return sphere;
+}
+
+GeomObject * Parse::parsePlane(std::istringstream & iss)
+{
+	Plane *plane = new Plane;
+	std::string token;
+	std::stringstream Stream;
+	std::stringstream Stream2;
+
+	//Get the normal
+	std::getline(iss, token);
+	Stream.str(token);
+	plane->normal= Vector(Stream);
+
+	//Get the distance
+	Stream2.str(token);
+
+	Stream2.ignore(std::numeric_limits<std::streamsize>::max(), ',');
+	Stream2.ignore(std::numeric_limits<std::streamsize>::max(), ',');
+	Stream2.ignore(std::numeric_limits<std::streamsize>::max(), ',');
+	Stream2 >> token;
+	plane-> distance = strtof(token.c_str(), NULL);
+
+
+	//Get the color vector
+	iss >> token;
+	validateToken("pigment", token);
+	std::getline(iss, token);
+	Stream.str(token);
+	plane->color = Vector(Stream);
+
+	//Get the finish info
+	iss >> token;
+	validateToken("finish", token);
+	std::getline(iss, token);
+	Stream.str(token);
+	parseFinish(Stream, *plane);
+
+	return plane;
+}
+
+void Parse::parseFinish(std::stringstream & Stream, GeomObject & object) {
+	std::stringbuf buf;
+	std::stringstream bufSS;
+	std::string token;
+
+	Stream.ignore(std::numeric_limits<std::streamsize>::max(), '{');
+	Stream.get(buf, '}');
+	Stream.ignore(std::numeric_limits<std::streamsize>::max(), '}');
+
+	bufSS.str(buf.str());
+
+	//Get ambient value
+	bufSS >> token;
+	validateToken("ambient", token);
+	bufSS >> token;
+	object.finish.ambient = strtof((token).c_str(), 0);
+
+	//Get diffuse value
+	bufSS >> token;
+	validateToken("diffuse", token);
+	bufSS >> token;
+	object.finish.diffuse = strtof((token).c_str(), 0);
 }
 
 
