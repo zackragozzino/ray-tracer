@@ -1,7 +1,9 @@
-
+#pragma once
 #include <string>
 #include <sstream>
 #include "GeomObject.hpp"
+#include "Scene.hpp"
+#include "Camera.hpp"
 #include <vector>
 
 struct vec3
@@ -17,12 +19,19 @@ public:
 
 	Parse() {}
 
-    static std::vector<GeomObject *> parseFile(std::ifstream & file);
+    static std::vector<GeomObject *> parseFile(std::ifstream & file, Scene &scene);
 
-    static std::vector<GeomObject *> parseString(std::string const & filestream);
+private:
 
-    static GeomObject * parseSphere(std::istringstream & iss);
+	static std::vector<GeomObject *> parseString(std::string const & filestream, Scene &scene);
 
-	static vec3 Vector(std::stringstream & Stream);
+	static Camera* parseCamera(std::istringstream & iss);
 
+	static Light* parseLight(std::istringstream & iss);
+
+	static GeomObject * parseSphere(std::istringstream & iss);
+
+	static glm::vec3 Vector(std::stringstream & Stream);
+
+	static void validateToken(std::string const & expected, std::string const & actual);
 };

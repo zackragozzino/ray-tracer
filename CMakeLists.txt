@@ -8,10 +8,19 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 # We don't really need to include header and resource files to build, but it's
 # nice to have them show up in IDEs.
-file(GLOB_RECURSE HEADERS "src/*.h")
+file(GLOB_RECURSE HEADERS "src/*.hpp" "src/*.h")
 
 # Set the executable.
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${HEADERS})
+
+# GLM
+set(GLM_INCLUDE_DIR "$ENV{GLM_INCLUDE_DIR}")
+if(NOT GLM_INCLUDE_DIR)
+  MESSAGE(FATAL_ERROR "Please point the environment variable GLM_INCLUDE_DIR to the include directory of your GLM installation.")
+else()
+  message(STATUS "GLM DIR: ${GLM_INCLUDE_DIR}")
+endif()
+include_directories(${GLM_INCLUDE_DIR})
 
 # OS specific options and libraries
 if(WIN32)

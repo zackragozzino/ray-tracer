@@ -1,6 +1,6 @@
 #include <vector>
 #include <memory>
-#include "Image.h"
+#include "Image.hpp"
 #include <algorithm>
 
 #include <iostream>
@@ -8,7 +8,9 @@
 #include <fstream>
 #include <sstream>
 #include "parse.hpp"
+#include "scene.hpp"
 
+Scene scene;
 
 int main(int argc, char **argv)
 {
@@ -24,34 +26,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    Parse::parseFile(FileHandle);
-
-    /*std::ifstream file(argv[1]);
-    std::istringstream iss;
-    std::stringstream sstr;
-
-    if (!file) {
-        std::cout << "File not found" << std::endl;
-        return 1;
-    }
-
-    sstr << file.rdbuf();
-    //std::cout << sstr.str() << std::endl;
-    iss.str(sstr.str());
-
-    std::string line;
-
-    //std::cout << iss.getline() << '\n';
-
-    std::string word;
-    while (!iss.eof()) {
-		iss >> word;
-
-		if (word == "//")
-			std::getline(iss, word);
-		else
-			std::cout << word << std::endl;
-    }
-    */
+    Parse::parseFile(FileHandle, scene);
+	scene.print();
 	return 0;
 }
