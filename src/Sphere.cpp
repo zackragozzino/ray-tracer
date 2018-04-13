@@ -29,9 +29,11 @@ float Sphere::intersect(const Ray & ray)
 
 void Sphere::print() {
 	std::cout << "- Type: Sphere" << std::endl;
-	std::cout << "- Center: {" << center.x << " " << center.y << " " << center.z << "}" << std::endl;
-	std::cout << "- Radius " << radius << std::endl;
-	parentPrint();
+	//std::cout << "- Center: {" << center.x << " " << center.y << " " << center.z << "}" << std::endl;
+    printf("- Center: {%.4f %.4f %.4f}\n", center.x, center.y, center.z);
+	//std::cout << "- Radius " << radius << std::endl;
+    printf("- Radius %.4f\n", radius);
+    parentPrint();
 };
 
 float intersect(const Ray & ray)
