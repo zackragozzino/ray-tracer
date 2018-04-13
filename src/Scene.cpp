@@ -3,6 +3,26 @@
 Scene::Scene() {
 
 }
+
+Ray Scene::castRay(int width, int height, int x, int y) {
+	
+	//float u = (x + (i + 0.5)) / width - 0.5;
+	//float v = (y + (j + 0.5)) / height - 0.5;
+
+	float u = -0.5 + ((x + 0.5) / width);
+	float v = -0.5 + ((y + 0.5) / height);
+
+	glm::vec3 w = glm::normalize(glm::vec3(camera->look_at - camera->location));
+
+
+	glm::vec3 position = camera->location;
+	glm::vec3 direction = glm::normalize(glm::vec3(u * camera->right + v * camera->up + w));
+
+	Ray ray(position, direction);
+
+	return ray;
+};
+
 void Scene::print()
 {
 	//Print camera info
@@ -20,11 +40,11 @@ void Scene::print()
 	std::cout << "---" << std::endl << std::endl;
 
 	//Print GeomObject info
-	std::cout << objects.size() << " object(s)" << std::endl << std::endl;
+	std::cout << objects.size() << " object(s)" << std::endl;
 	for (int i = 0; i < objects.size(); i++) {
+		std::cout << std::endl;
 		std::cout << "Object[" << i << "]:" << std::endl;
 		objects[i]->print();
-		std::cout << std::endl;
 	}
 
 }

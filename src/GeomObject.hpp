@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <iostream>
 #include "glm/glm.hpp"
+#include "Ray.hpp"
 
 class GeomObject {
 
