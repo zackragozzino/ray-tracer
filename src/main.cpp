@@ -6,6 +6,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <cstring>
 
 #include "parse.hpp"
 #include "Scene.hpp"
@@ -44,7 +45,7 @@ int main(int argc, char **argv)
 		std::cout << "Pixel: [" << x << ", " << y << "] ";
 		ray.print();
 		
-		if ((!strcmp(argv[1], "firsthit"))) {
+		if (!strcmp(argv[1], "firsthit")) {
 			Hit hit(scene, ray);
 			hit.print();
 			if(hit.hit)
