@@ -21,6 +21,8 @@ public:
 
     static std::vector<GeomObject *> parseString(std::string const & filestream);
 
+    static GeomObject * parseSphere(std::istringstream & iss);
+
 	static vec3 Vector(std::stringstream & Stream);
 
 };

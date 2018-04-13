@@ -5,6 +5,7 @@
 #include <iostream>
 #include <limits>
 #include <fstream>
+#include <streambuf>
 using namespace std;
 
 std::vector<GeomObject*> Parse::parseFile(std::ifstream & file)
@@ -24,19 +25,37 @@ std::vector<GeomObject*> Parse::parseString(std::string const & filestream)
 {
     std::istringstream iss(filestream);
     std::string token;
+    std::vector<GeomObject*> obj;
 
     while (!iss.eof()) {
         iss >> token;
 
         //Check if token is a comment
-        if(token.substr(0,2) == "//")
+        if (token.substr(0, 2) == "//")
             std::getline(iss, token);
+        else if (token == "sphere")
+            obj.push_back(Parse::parseSphere(iss));
+
         else
             std::cout << token << std::endl;
     }
 
     return std::vector<GeomObject*>();
 }
+
+GeomObject * Parse::parseSphere(std::istringstream & iss)
+{
+    std::streambuf buf();
+    iss.ignore(numeric_limits<streamsize>::max(), '<');
+    iss.get(buf(), '>');  
+    std::string test;
+    buf().sputn(test, buf())
+    int read = sscanf(buf() )
+
+
+    return nullptr;
+}
+
 
 vec3 Parse::Vector(std::stringstream & Stream)
 {
