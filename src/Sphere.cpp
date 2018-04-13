@@ -32,7 +32,7 @@ void Sphere::print() {
 	//std::cout << "- Center: {" << center.x << " " << center.y << " " << center.z << "}" << std::endl;
     printf("- Center: {%.4f %.4f %.4f}\n", center.x, center.y, center.z);
 	//std::cout << "- Radius " << radius << std::endl;
-    printf("- Radius %.4f\n", radius);
+    printf("- Radius: %.4f\n", radius);
     parentPrint();
 };
 
