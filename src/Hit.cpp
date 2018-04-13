@@ -28,7 +28,7 @@ void Hit::checkIntersection(Ray & ray, GeomObject * object)
 void Hit::print()
 {
 	if (hit) {
-		std::cout << "T = " << t_val << std::endl;
+        printf("T = %.4f\n", t_val);
 		std::cout << "Object Type: " << hitObject->type << std::endl;
 	}
 	else {
