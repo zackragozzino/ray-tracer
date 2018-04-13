@@ -1,18 +1,20 @@
 #include <vector>
 #include <memory>
-#include "Image.hpp"
 #include <algorithm>
 
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <sstream>
+
 #include "parse.hpp"
 #include "scene.hpp"
 #include "parse.hpp"
 #include "Hit.hpp"
+#include "RenderSystem.hpp"
 
 Scene scene;
+RenderSystem renderSystem;
 
 int main(int argc, char **argv)
 {
@@ -47,10 +49,13 @@ int main(int argc, char **argv)
 			hit.print();
 			if(hit.hit)
 				std::cout << "Color: " << hit.color.r << " " << hit.color.g << " " << hit.color.b << std::endl;
-
 		}
 
 	}
+
+	int width = atoi(argv[3]);
+	int height = atoi(argv[4]);
+	renderSystem.render(scene, width, height);
 
 	return 0;
 }
