@@ -10,6 +10,7 @@
 #include "parse.hpp"
 #include "scene.hpp"
 #include "parse.hpp"
+#include "Hit.hpp"
 
 Scene scene;
 
@@ -40,6 +41,14 @@ int main(int argc, char **argv)
 
 		std::cout << "Pixel: [" << x << ", " << y << "] ";
 		ray.print();
+		
+		if ((!strcmp(argv[1], "firsthit"))) {
+			Hit hit(scene, ray);
+			hit.print();
+			if(hit.hit)
+				std::cout << "Color: " << hit.color.r << " " << hit.color.g << " " << hit.color.b << std::endl;
+
+		}
 
 	}
 

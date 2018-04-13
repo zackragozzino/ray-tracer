@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GeomObject.hpp"
-
+#include <algorithm>
 class Sphere : public GeomObject { // derived (subcl)
 
 public:
@@ -10,6 +10,8 @@ public:
 
 	glm::vec3 center;
 	float radius;
+
+	float intersect(const Ray &ray);
 
 	void print();
 	

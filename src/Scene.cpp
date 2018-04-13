@@ -5,9 +5,6 @@ Scene::Scene() {
 }
 
 Ray Scene::castRay(int width, int height, int x, int y) {
-	
-	//float u = (x + (i + 0.5)) / width - 0.5;
-	//float v = (y + (j + 0.5)) / height - 0.5;
 
 	float u = -0.5 + ((x + 0.5) / width);
 	float v = -0.5 + ((y + 0.5) / height);

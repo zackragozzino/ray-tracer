@@ -1,6 +1,19 @@
 #include "Plane.hpp"
 
-Plane::Plane() {}
+Plane::Plane() {
+	type = "Plane";
+}
+float Plane::intersect(const Ray & ray)
+{
+	float denominator = dot(ray.direction, normal);
+	if (denominator == 0)
+		return -1;
+
+	float numerator = distance - dot(ray.position, normal);
+
+	return numerator / denominator;
+}
+;
 
 void Plane::print()
 {

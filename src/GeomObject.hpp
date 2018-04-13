@@ -18,9 +18,11 @@ public:
 
 	glm::vec3 color;
 	Finish finish;
+	std::string type;
 
 	void parentPrint();
 
+	virtual float intersect(const Ray &ray) = 0;
 	virtual void print() = 0;
 
 	
