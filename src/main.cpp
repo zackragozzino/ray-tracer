@@ -8,7 +8,7 @@
 #include <sstream>
 
 #include "parse.hpp"
-#include "scene.hpp"
+#include "Scene.hpp"
 #include "parse.hpp"
 #include "Hit.hpp"
 #include "RenderSystem.hpp"
