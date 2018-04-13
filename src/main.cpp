@@ -49,7 +49,6 @@ int main(int argc, char **argv)
 			Hit hit(scene, ray);
 			hit.print();
 			if(hit.hit)
-				//std::cout << "Color: " << hit.color.r << " " << hit.color.g << " " << hit.color.b << std::endl;
                 printf("Color: %.4f %.4f %.4f\n", hit.color.r, hit.color.g, hit.color.b);
 		}
 

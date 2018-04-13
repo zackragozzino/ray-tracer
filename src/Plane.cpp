@@ -18,9 +18,7 @@ float Plane::intersect(const Ray & ray)
 void Plane::print()
 {
 	std::cout << "- Type: Plane" << std::endl;
-	//std::cout << "- Normal: {" << normal.x << " " << normal.y << " " << normal.z << "}" << std::endl;
     printf("- Normal: {%.4f %.4f %.4f}\n", normal.x, normal.y, normal.z);
-	//std::cout << "- Distance: " << distance << std::endl;
     printf("- Distance: %.4f\n", distance);
     parentPrint();
 };
