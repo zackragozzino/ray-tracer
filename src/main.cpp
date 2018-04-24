@@ -52,11 +52,13 @@ int main(int argc, char **argv)
                 printf("Color: %.4f %.4f %.4f\n", hit.color.r, hit.color.g, hit.color.b);
 		}
 
-	}
+    }
+    else if (!strcmp(argv[1], "render")) {
 
-	int width = atoi(argv[3]);
-	int height = atoi(argv[4]);
-	renderSystem.render(scene, width, height);
+        int width = atoi(argv[3]);
+        int height = atoi(argv[4]);
+        renderSystem.render(scene, width, height);
+    }
 
 	return 0;
 }
