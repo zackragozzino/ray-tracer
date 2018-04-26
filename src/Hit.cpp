@@ -9,11 +9,11 @@ Hit::Hit(Scene & scene, Ray & ray)
 	this->t_val = std::numeric_limits<float>::max();
 
 	for (int i = 0; i < scene.objects.size(); i++) {
-		checkIntersection(ray, scene.objects[i]);
+		checkIntersection(scene.objects[i]);
 	}
 }
 
-void Hit::checkIntersection(Ray & ray, GeomObject * object)
+void Hit::checkIntersection(GeomObject * object)
 {
 	float intersection_t = object->intersect(ray);
 
@@ -22,17 +22,9 @@ void Hit::checkIntersection(Ray & ray, GeomObject * object)
 		t_val = intersection_t;
 		hitObject = object;
 		color = object->color;
+		hitPos = ray.getIntersectionPoint(t_val);
+		normal = glm::vec3(glm::transpose(glm::mat4(1.0f)) * glm::vec4(hitObject->getNormal(hitPos), 0.0f));
 	}
-}
-
-glm::vec3 Hit::getHitColor(Ray & ray, GeomObject * object, float t_val)
-{
-    glm::vec3 pt = ray.position + ray.direction * t_val;
-    glm::vec3 color = object->color * object->finish.ambient;
-
-
-
-    return glm::vec3();
 }
 
 void Hit::print()

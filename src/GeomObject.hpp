@@ -23,6 +23,7 @@ public:
 	void parentPrint();
 
 	virtual float intersect(const Ray &ray) = 0;
+	virtual glm::vec3 getNormal(glm::vec3 point) = 0;
 	virtual void print() = 0;
 
 	

@@ -12,7 +12,7 @@ public:
 	float radius;
 
 	float intersect(const Ray &ray);
-
+	glm::vec3 getNormal(glm::vec3 point);
 	void print();
 	
 

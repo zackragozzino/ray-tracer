@@ -15,6 +15,10 @@ float Plane::intersect(const Ray & ray)
 }
 ;
 
+glm::vec3 Plane::getNormal(glm::vec3 point) {
+	return normal;
+}
+
 void Plane::print()
 {
 	std::cout << "- Type: Plane" << std::endl;

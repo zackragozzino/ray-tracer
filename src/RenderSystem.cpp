@@ -18,7 +18,10 @@ void RenderSystem::render(Scene & scene, int & width, int & height)
 			Ray ray = scene.castRay(width, height, x, y);
 			Hit hit(scene, ray);
 
-			color = hit.color;
+			if(hit.hit)
+				color = calculateColor(scene, hit);
+			//color = hit.color;
+
 			color.r = round(glm::clamp(color.r, 0.f, 1.f) * 255.f);
 			color.g = round(glm::clamp(color.g, 0.f, 1.f) * 255.f);
 			color.b = round(glm::clamp(color.b, 0.f, 1.f) * 255.f);
@@ -31,5 +34,42 @@ void RenderSystem::render(Scene & scene, int & width, int & height)
 
 	stbi_write_png(fileName.c_str(), size.x, size.y, numChannels, data, size.x * numChannels);
 	delete[] data;
-	
 }
+
+
+glm::vec3 RenderSystem::calculateColor(Scene &scene, Hit &hit)
+{
+	/*glm::vec3 pt = ray.position + ray.direction * t_val;
+	glm::vec3 color = object->color * object->finish.ambient;
+	bool inShadow;
+
+	for (Light *light : scene.lights) {
+		inShadow = false;
+		glm::vec3 l = light->location;
+	}*/
+
+	glm::vec3 color = hit.color * hit.hitObject->finish.ambient;
+	
+
+	for (Light *light : scene.lights) {
+
+		color += calculateDiffuse(hit, *light);
+	}
+
+	return color;
+}
+
+glm::vec3 RenderSystem::calculateDiffuse(Hit &hit, Light &light) {
+	glm::vec3 diffuse = glm::vec3(0, 0, 0);
+	glm::vec3 lightDir = glm::normalize(light.location - hit.hitPos);
+	
+	float NL = std::max(0.f, glm::dot(hit.normal, lightDir));
+
+	if (NL && hit.hitObject->finish.diffuse) {
+		diffuse = hit.hitObject->finish.diffuse * NL * light.color * hit.hitObject->color;
+	}
+
+	return diffuse;
+}
+
+

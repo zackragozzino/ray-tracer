@@ -27,6 +27,10 @@ float Sphere::intersect(const Ray & ray)
 	return -1;
 }
 
+glm::vec3 Sphere::getNormal(glm::vec3 point) {
+	return glm::normalize(point - center);
+}
+
 void Sphere::print() {
 	std::cout << "- Type: Sphere" << std::endl;
     printf("- Center: {%.4f %.4f %.4f}\n", center.x, center.y, center.z);
