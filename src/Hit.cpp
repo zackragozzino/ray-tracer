@@ -25,6 +25,16 @@ void Hit::checkIntersection(Ray & ray, GeomObject * object)
 	}
 }
 
+glm::vec3 Hit::getHitColor(Ray & ray, GeomObject * object, float t_val)
+{
+    glm::vec3 pt = ray.position + ray.direction * t_val;
+    glm::vec3 color = object->color * object->finish.ambient;
+
+
+
+    return glm::vec3();
+}
+
 void Hit::print()
 {
 	if (hit) {

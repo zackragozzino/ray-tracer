@@ -12,6 +12,8 @@ public:
 
 	void checkIntersection(Ray &ray, GeomObject *object);
 
+    glm::vec3 getHitColor(Ray &ray, GeomObject *object, float t_val);
+
 	bool hit;
 	Ray ray;
 	float t_val;
