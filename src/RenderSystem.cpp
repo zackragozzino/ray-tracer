@@ -54,6 +54,7 @@ glm::vec3 RenderSystem::calculateColor(Scene &scene, Hit &hit)
 	for (Light *light : scene.lights) {
 
 		color += calculateDiffuse(hit, *light);
+		color += calculateSpecular(hit, *light);
 	}
 
 	return color;
@@ -70,6 +71,20 @@ glm::vec3 RenderSystem::calculateDiffuse(Hit &hit, Light &light) {
 	}
 
 	return diffuse;
+}
+
+glm::vec3 RenderSystem::calculateSpecular(Hit &hit, Light &light) {
+	glm::vec3 specular = glm::vec3(0, 0, 0);
+	glm::vec3 lightDir = glm::normalize(light.location - hit.hitPos);
+	glm::vec3 half = glm::normalize(lightDir - hit.ray.direction);
+	float HN = std::max(0.f, glm::dot(half, hit.normal));
+
+	if (HN && hit.hitObject->finish.specular) {
+		float r = hit.hitObject->finish.roughness * hit.hitObject->finish.roughness;
+		specular = hit.hitObject->finish.specular * hit.hitObject->color * (float)pow(HN, 2 / r) * light.color;
+	}
+	
+	return specular;
 }
 
 

@@ -14,6 +14,8 @@ public:
 	struct Finish {
 		float ambient = 0;
 		float diffuse = 0;
+		float specular = 0;
+		float roughness = 0;
 	};
 
 	glm::vec3 color;

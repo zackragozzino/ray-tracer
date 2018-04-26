@@ -221,6 +221,23 @@ void Parse::parseFinish(std::stringstream & Stream, GeomObject & object) {
 	validateToken("diffuse", token);
 	bufSS >> token;
 	object.finish.diffuse = strtof((token).c_str(), 0);
+
+	//Get specular
+	bufSS >> token;
+	if (token == "specular") {
+		bufSS >> token;
+		object.finish.specular = strtof((token).c_str(), 0);
+	}
+
+	//Get roughness
+	bufSS >> token;
+	if (token == "roughness") {
+		bufSS >> token;
+		object.finish.roughness = strtof((token).c_str(), 0);
+	}
+
+
+	
 }
 
 

@@ -14,6 +14,8 @@ public:
 
 	glm::vec3 calculateDiffuse(Hit &hit, Light &light);
 
+	glm::vec3 calculateSpecular(Hit &hit, Light &light);
+
 	std::string fileName = "output.png";
 
 };
