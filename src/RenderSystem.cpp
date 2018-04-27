@@ -33,7 +33,6 @@ glm::vec3 RenderSystem::calculateColor(Scene &scene, Hit &hit)
 {
 	glm::vec3 color = glm::vec3(0,0,0);
 
-
 	if (hit.hit) {
 		color = hit.color * hit.hitObject->finish.ambient;
 
@@ -42,7 +41,7 @@ glm::vec3 RenderSystem::calculateColor(Scene &scene, Hit &hit)
 			Ray lightRay(hit.hitPos, lightDir);
 			Hit lightHit(scene, lightRay);
 
-			if (!lightHit.hit) {
+			if (!lightHit.hit || glm::distance(hit.hitPos, light->location) < distance(hit.hitPos, lightHit.hitPos) ) {
 				color += calculateDiffuse(hit, *light);
 				color += calculateSpecular(hit, *light);
 			}
