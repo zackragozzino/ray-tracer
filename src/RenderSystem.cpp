@@ -76,7 +76,7 @@ glm::vec3 RenderSystem::calculateSpecular(Hit &hit, Light &light) {
 
 	if (HN && hit.hitObject->finish.specular) {
 		float r = hit.hitObject->finish.roughness * hit.hitObject->finish.roughness;
-		specular = hit.hitObject->finish.specular * hit.hitObject->color * (float)pow(HN, 2 / r) * light.color;
+		specular = hit.hitObject->finish.specular * hit.hitObject->color * (float)pow(HN, 2/r - 2) * light.color;
 	}
 	
 	return specular;
