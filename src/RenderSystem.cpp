@@ -13,18 +13,10 @@ void RenderSystem::render(Scene & scene, int & width, int & height)
 	{
 		for (int x = 0; x < size.x; ++x)
 		{
-			glm::vec3 color = glm::vec3(0, 0, 0);
-
 			Ray ray = scene.castRay(width, height, x, y);
 			Hit hit(scene, ray);
 
-			if(hit.hit)
-				color = calculateColor(scene, hit);
-			//color = hit.color;
-
-			color.r = round(glm::clamp(color.r, 0.f, 1.f) * 255.f);
-			color.g = round(glm::clamp(color.g, 0.f, 1.f) * 255.f);
-			color.b = round(glm::clamp(color.b, 0.f, 1.f) * 255.f);
+			glm::vec3 color = calculateColor(scene, hit);
 
 			data[(size.x * numChannels) * (size.y - 1 - y) + numChannels * x + 0] = color.r;
 			data[(size.x * numChannels) * (size.y - 1 - y) + numChannels * x + 1] = color.g;
@@ -39,29 +31,27 @@ void RenderSystem::render(Scene & scene, int & width, int & height)
 
 glm::vec3 RenderSystem::calculateColor(Scene &scene, Hit &hit)
 {
-	/*glm::vec3 pt = ray.position + ray.direction * t_val;
-	glm::vec3 color = object->color * object->finish.ambient;
-	bool inShadow;
+	glm::vec3 color = glm::vec3(0,0,0);
 
-	for (Light *light : scene.lights) {
-		inShadow = false;
-		glm::vec3 l = light->location;
-	}*/
 
-	glm::vec3 color = hit.color * hit.hitObject->finish.ambient;
-	
+	if (hit.hit) {
+		color = hit.color * hit.hitObject->finish.ambient;
 
-	for (Light *light : scene.lights) {
-		glm::vec3 lightDir = glm::normalize(light->location - hit.hitPos);
-		Ray lightRay(hit.hitPos, lightDir);
-		Hit lightHit(scene, lightRay);
+		for (Light *light : scene.lights) {
+			glm::vec3 lightDir = glm::normalize(light->location - hit.hitPos);
+			Ray lightRay(hit.hitPos, lightDir);
+			Hit lightHit(scene, lightRay);
 
-		if (!lightHit.hit) {
-			color += calculateDiffuse(hit, *light);
-			color += calculateSpecular(hit, *light);
+			if (!lightHit.hit) {
+				color += calculateDiffuse(hit, *light);
+				color += calculateSpecular(hit, *light);
+			}
 		}
-
 	}
+
+	color.r = round(glm::clamp(color.r, 0.f, 1.f) * 255.f);
+	color.g = round(glm::clamp(color.g, 0.f, 1.f) * 255.f);
+	color.b = round(glm::clamp(color.b, 0.f, 1.f) * 255.f);
 
 	return color;
 }

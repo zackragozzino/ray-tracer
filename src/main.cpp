@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 
 	if(!strcmp(argv[1], "sceneinfo"))
 		scene.print();
-	else if (!strcmp(argv[1], "pixelray") || (!strcmp(argv[1], "firsthit"))) {
+	else if (!strcmp(argv[1], "pixelray") || !strcmp(argv[1], "firsthit") || !strcmp(argv[1], "pixelcolor") ) {
 		int width = atoi(argv[3]);
 		int height = atoi(argv[4]);
 		int x = atoi(argv[5]);
@@ -50,6 +50,17 @@ int main(int argc, char **argv)
 			hit.print();
 			if(hit.hit)
                 printf("Color: %.4f %.4f %.4f\n", hit.color.r, hit.color.g, hit.color.b);
+		}
+
+		else if(!strcmp(argv[1], "pixelcolor"))
+		{
+			Hit hit(scene, ray);
+			glm::vec3 color = renderSystem.calculateColor(scene, hit);
+
+			printf("T = %.4f\n", hit.t_val);
+			std::cout << "Object Type: " << hit.hitObject->type << std::endl;
+			std::cout << "BRDF: " << "Blinn-Phong" << std::endl;
+			printf("Color: (%.0f, %.0f, %.0f)\n", color.r, color.g, color.b);
 		}
 
     }
