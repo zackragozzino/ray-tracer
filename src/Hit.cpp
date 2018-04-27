@@ -1,5 +1,7 @@
 #include "Hit.hpp"
 
+const static float EPSILON = 0.0001f;
+
 Hit::Hit() {};
 
 Hit::Hit(Scene & scene, Ray & ray)
@@ -17,7 +19,7 @@ void Hit::checkIntersection(GeomObject * object)
 {
 	float intersection_t = object->intersect(ray);
 
-	if (intersection_t > 0.0f && intersection_t < t_val) {
+	if (intersection_t > EPSILON && intersection_t < t_val) {
 		hit = true;
 		t_val = intersection_t;
 		hitObject = object;
