@@ -53,9 +53,6 @@ glm::vec3 Triangle::getNormal(glm::vec3 point)
 	normal.z = (U.x - V.y) - (U.y * V.x);
 
 	return normalize(normal);
-
-	//return normalize(glm::vec3(V.y*W.z - V.z*W.y, V.z*W.x - V.x*W.z, V.x*W.y - V.y*W.x));
-	
 }
 
 void Triangle::print()

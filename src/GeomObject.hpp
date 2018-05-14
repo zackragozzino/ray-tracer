@@ -16,6 +16,9 @@ public:
 		float diffuse = 0;
 		float specular = 0;
 		float roughness = 0;
+		float reflection = 0;
+		float refraction = 0;
+		float ior = 0;
 	};
 
 	glm::vec3 color;
@@ -27,24 +30,4 @@ public:
 	virtual float intersect(const Ray &ray) = 0;
 	virtual glm::vec3 getNormal(glm::vec3 point) = 0;
 	virtual void print() = 0;
-
-	
-	//From Ian's reference
-
-	/*~GeomObject();
-
-	void parse_pigment(FILE *fp);
-	void parse_transform(FILE *fp);
-
-	virtual void parse(FILE *fp) {
-		parse_pigment(fp);
-		parse_transform(fp);
-	}
-
-protected:
-
-	float tx, ty, tz;
-
-private:
-*/
 };

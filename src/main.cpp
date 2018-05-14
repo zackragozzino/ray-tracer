@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 
 	if(!strcmp(argv[1], "sceneinfo"))
 		scene.print();
-	else if (!strcmp(argv[1], "pixelray") || !strcmp(argv[1], "firsthit") || !strcmp(argv[1], "pixelcolor") ) {
+	else if (!strcmp(argv[1], "pixelray") || !strcmp(argv[1], "firsthit") || !strcmp(argv[1], "pixelcolor") || !strcmp(argv[1], "printrays") ) {
 		int width = atoi(argv[3]);
 		int height = atoi(argv[4]);
 		int x = atoi(argv[5]);
@@ -45,7 +45,7 @@ int main(int argc, char **argv)
 		std::cout << "Pixel: [" << x << ", " << y << "] ";
 		ray.print();
 		
-		if (!strcmp(argv[1], "firsthit")) {
+		if (!strcmp(argv[1], "firsthit") || !strcmp(argv[1], "printrays")) {
 			Hit hit(scene, ray);
 			hit.print();
 			if(hit.hit)

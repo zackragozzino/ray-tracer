@@ -245,42 +245,50 @@ void Parse::parseFinish(std::stringstream & Stream, GeomObject & object) {
 	std::stringstream bufSS;
 	std::string token;
 
+	bool endOfString = false;
+
 	Stream.ignore(std::numeric_limits<std::streamsize>::max(), '{');
 	Stream.get(buf, '}');
 	Stream.ignore(std::numeric_limits<std::streamsize>::max(), '}');
 
 	bufSS.str(buf.str());
 
-	//Get ambient value
-	bufSS >> token;
-	validateToken("ambient", token);
-	bufSS >> token;
-	object.finish.ambient = strtof((token).c_str(), 0);
-
-	//Get diffuse value
-	bufSS >> token;
-	validateToken("diffuse", token);
-	bufSS >> token;
-	object.finish.diffuse = strtof((token).c_str(), 0);
-
-	//Get specular
-	bufSS >> token;
-	if (token == "specular") {
+	while (!endOfString) {
 		bufSS >> token;
-		object.finish.specular = strtof((token).c_str(), 0);
+		if (token == "ambient") {
+			bufSS >> token;
+			object.finish.ambient = strtof((token).c_str(), 0);
+		}
+		else if (token == "diffuse") {
+			bufSS >> token;
+			object.finish.diffuse = strtof((token).c_str(), 0);
+		}
+		else if (token == "specular") {
+			bufSS >> token;
+			object.finish.specular = strtof((token).c_str(), 0);
+		}
+		else if (token == "roughness") {
+			bufSS >> token;
+			object.finish.roughness = strtof((token).c_str(), 0);
+		}
+		else if (token == "reflection") {
+			bufSS >> token;
+			object.finish.reflection = strtof((token).c_str(), 0);
+		}
+		else if (token == "refraction") {
+			bufSS >> token;
+			object.finish.refraction = strtof((token).c_str(), 0);
+		}
+		else if (token == "ior") {
+			bufSS >> token;
+			object.finish.ior = strtof((token).c_str(), 0);
+		}
+		else {
+			endOfString = true;
+		}
 	}
-
-	//Get roughness
-	bufSS >> token;
-	if (token == "roughness") {
-		bufSS >> token;
-		object.finish.roughness = strtof((token).c_str(), 0);
-	}
-
-
 	
 }
-
 
 glm::vec3 Parse::Vector(std::stringstream & Stream)
 {
