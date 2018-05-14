@@ -5,7 +5,7 @@
 #include "Hit.hpp"
 #include <algorithm>
 
-#define MAX_RAY_BOUNCES 6 
+#define MAX_RAY_BOUNCES 6
 
 class RenderSystem {
 public:

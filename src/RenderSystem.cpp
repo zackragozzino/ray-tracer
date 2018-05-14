@@ -38,7 +38,7 @@ glm::vec3 RenderSystem::calculateColor(Scene &scene, Ray &ray, int bounceCount)
 	glm::vec3 color = glm::vec3(0,0,0);
 
 	if (hit.hit && bounceCount > 0) {
-		color = hit.color * hit.hitObject->finish.ambient;
+
 
 		glm::vec3 blinnPhongColor = calculateBlinnPhong(scene, hit);
 		glm::vec3 reflectionColor = calculateReflection(scene, hit, bounceCount);
@@ -48,7 +48,7 @@ glm::vec3 RenderSystem::calculateColor(Scene &scene, Ray &ray, int bounceCount)
         float reflectionContribution = (1 - hit.hitObject->finish.filter) * hit.hitObject->finish.reflection;
         float refractionContribution = hit.hitObject->finish.filter;
 
-		color += blinnPhongColor * localContribution;
+		color +=  blinnPhongColor * localContribution;
         color += reflectionColor * reflectionContribution;
         color += refractionColor * refractionContribution;
 	}
@@ -58,7 +58,7 @@ glm::vec3 RenderSystem::calculateColor(Scene &scene, Ray &ray, int bounceCount)
 
 glm::vec3 RenderSystem::calculateBlinnPhong(Scene & scene, Hit & hit)
 {
-	glm::vec3 color = glm::vec3(0, 0, 0);
+    glm::vec3 color = hit.hitObject->finish.ambient * hit.color;
 
 	for (Light *light : scene.lights) {
 		glm::vec3 lightDir = glm::normalize(light->location - hit.hitPos);
@@ -126,7 +126,7 @@ glm::vec3 RenderSystem::calculateRefraction(Scene & scene, Hit & hit, int bounce
 	if (!refractionHit.hit)
 		return refractionColor;
 
-	refractionColor = calculateColor(scene, refraction, bounceCount - 1);
+	refractionColor = calculateColor(scene, refraction, bounceCount - 1) * hit.color;
 
 	return refractionColor;
 }
