@@ -29,6 +29,13 @@ void Hit::checkIntersection(GeomObject * object)
 	}
 }
 
+Ray Hit::getReflectedRay()
+{
+	glm::vec3 reflectedDir = glm::normalize(ray.direction - 2 * glm::dot(ray.direction, normal) * normal);
+
+	return Ray(reflectedDir * EPSILON + hitPos, reflectedDir);
+}
+
 void Hit::print()
 {
 	if (hit) {

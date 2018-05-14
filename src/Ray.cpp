@@ -8,7 +8,7 @@ Ray::Ray(glm::vec3 pos, glm::vec3 dir) {
 }
 
 glm::vec3 Ray::getIntersectionPoint(float t_val) {
-	return position + t_val *direction;
+	return position + t_val * direction;
 }
 
 void Ray::print() {

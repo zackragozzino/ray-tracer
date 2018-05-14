@@ -14,9 +14,12 @@ void RenderSystem::render(Scene & scene, int & width, int & height)
 		for (int x = 0; x < size.x; ++x)
 		{
 			Ray ray = scene.castRay(width, height, x, y);
-			Hit hit(scene, ray);
 
-			glm::vec3 color = calculateColor(scene, hit);
+			glm::vec3 color = calculateColor(scene, ray, MAX_RAY_BOUNCES);
+
+			color.r = round(glm::clamp(color.r, 0.f, 1.f) * 255.f);
+			color.g = round(glm::clamp(color.g, 0.f, 1.f) * 255.f);
+			color.b = round(glm::clamp(color.b, 0.f, 1.f) * 255.f);
 
 			data[(size.x * numChannels) * (size.y - 1 - y) + numChannels * x + 0] = color.r;
 			data[(size.x * numChannels) * (size.y - 1 - y) + numChannels * x + 1] = color.g;
@@ -29,29 +32,38 @@ void RenderSystem::render(Scene & scene, int & width, int & height)
 }
 
 
-glm::vec3 RenderSystem::calculateColor(Scene &scene, Hit &hit)
+glm::vec3 RenderSystem::calculateColor(Scene &scene, Ray &ray, int bounceCount)
 {
+	Hit hit(scene, ray);
 	glm::vec3 color = glm::vec3(0,0,0);
 
-	if (hit.hit) {
+	if (hit.hit && bounceCount > 0) {
 		color = hit.color * hit.hitObject->finish.ambient;
 
-		for (Light *light : scene.lights) {
-			glm::vec3 lightDir = glm::normalize(light->location - hit.hitPos);
-			Ray lightRay(hit.hitPos, lightDir);
-			Hit lightHit(scene, lightRay);
+		glm::vec3 blinnPhongColor = calculateBlinnPhong(scene, hit);
+		glm::vec3 reflectionColor = calculateReflection(scene, hit, bounceCount);
 
-			if (!lightHit.hit || glm::distance(hit.hitPos, light->location) < distance(hit.hitPos, lightHit.hitPos) ) {
-				color += calculateDiffuse(hit, *light);
-				color += calculateSpecular(hit, *light);
-			}
-		}
+		color += blinnPhongColor * (1 - hit.hitObject->finish.reflection);
+		color += reflectionColor * hit.hitObject->finish.reflection;
 	}
 
-	color.r = round(glm::clamp(color.r, 0.f, 1.f) * 255.f);
-	color.g = round(glm::clamp(color.g, 0.f, 1.f) * 255.f);
-	color.b = round(glm::clamp(color.b, 0.f, 1.f) * 255.f);
+	return color;
+}
 
+glm::vec3 RenderSystem::calculateBlinnPhong(Scene & scene, Hit & hit)
+{
+	glm::vec3 color = glm::vec3(0, 0, 0);
+
+	for (Light *light : scene.lights) {
+		glm::vec3 lightDir = glm::normalize(light->location - hit.hitPos);
+		Ray lightRay(hit.hitPos, lightDir);
+		Hit lightHit(scene, lightRay);
+
+		if (!lightHit.hit || glm::distance(hit.hitPos, light->location) < distance(hit.hitPos, lightHit.hitPos)) {
+			color += calculateDiffuse(hit, *light);
+			color += calculateSpecular(hit, *light);
+		}
+	}
 	return color;
 }
 
@@ -80,6 +92,19 @@ glm::vec3 RenderSystem::calculateSpecular(Hit &hit, Light &light) {
 	}
 	
 	return specular;
+}
+
+glm::vec3 RenderSystem::calculateReflection(Scene & scene, Hit & hit, int bounceCount)
+{
+	glm::vec3 reflectionColor = glm::vec3(0, 0, 0);
+
+	if (hit.hitObject->finish.reflection == 0)
+		return reflectionColor;
+
+	Ray reflection = hit.getReflectedRay();
+	reflectionColor = calculateColor(scene, reflection, bounceCount - 1) * hit.color;
+
+	return reflectionColor;
 }
 
 

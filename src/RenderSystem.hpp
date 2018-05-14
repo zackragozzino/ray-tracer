@@ -5,16 +5,22 @@
 #include "Hit.hpp"
 #include <algorithm>
 
+#define MAX_RAY_BOUNCES 6 
+
 class RenderSystem {
 public:
 
 	void render(Scene & scene, int & width, int & height);
 
-	glm::vec3 calculateColor(Scene &scene, Hit &hit);
+	glm::vec3 calculateColor(Scene &scene, Ray &ray, int bounceCount);
+
+	glm::vec3 calculateBlinnPhong(Scene &scene, Hit &hit);
 
 	glm::vec3 calculateDiffuse(Hit &hit, Light &light);
 
 	glm::vec3 calculateSpecular(Hit &hit, Light &light);
+
+	glm::vec3 calculateReflection(Scene &scene, Hit &hit, int bounceCount);
 
 	std::string fileName = "output.png";
 

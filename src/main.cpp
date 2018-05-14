@@ -55,7 +55,7 @@ int main(int argc, char **argv)
 		else if(!strcmp(argv[1], "pixelcolor"))
 		{
 			Hit hit(scene, ray);
-			glm::vec3 color = renderSystem.calculateColor(scene, hit);
+			glm::vec3 color = renderSystem.calculateColor(scene, ray, 6);
 
 			printf("T = %.4f\n", hit.t_val);
 			std::cout << "Object Type: " << hit.hitObject->type << std::endl;

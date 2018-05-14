@@ -12,6 +12,8 @@ public:
 
 	void checkIntersection(GeomObject *object);
 
+	Ray getReflectedRay();
+
 	bool hit;
 	Ray ray;
 	float t_val;
