@@ -19,6 +19,7 @@ public:
 		float reflection = 0;
 		float refraction = 0;
 		float ior = 0;
+		float filter = 0;
 	};
 
 	glm::vec3 color;

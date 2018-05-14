@@ -150,7 +150,10 @@ GeomObject * Parse::parseSphere(std::istringstream & iss)
 	validateToken("pigment", token);
 	std::getline(iss, token);
 	Stream.str(token);
+	parsePigment(Stream, *sphere);
+	/*
 	sphere->color = Vector(Stream);
+	*/
 
 	//Get the finish info
 	iss >> token;
@@ -238,6 +241,28 @@ GeomObject * Parse::parseTriangle(std::istringstream & iss)
 	parseFinish(Stream, *triangle);
 	
 	return triangle;
+}
+
+void Parse::parsePigment(std::stringstream & Stream, GeomObject & object)
+{
+	std::stringbuf buf;
+	std::stringstream bufSS;
+	std::string token;
+
+	Stream.ignore(std::numeric_limits<std::streamsize>::max(), '{');
+	Stream.get(buf, '}');
+	Stream.ignore(std::numeric_limits<std::streamsize>::max(), '}');
+
+	bufSS.str(buf.str());
+
+	bufSS >> token;
+	bufSS >> token;
+
+	std::string line = buf.str();
+	if (token == "rgb")
+		int read = sscanf(line.c_str(), " color rgb <%f, %f, %f>", &object.color.r, &object.color.g, &object.color.b);
+	else
+		int read = sscanf(line.c_str(), " color rgbf <%f, %f, %f, %f>", &object.color.r, &object.color.g, &object.color.b, &object.finish.filter);
 }
 
 void Parse::parseFinish(std::stringstream & Stream, GeomObject & object) {

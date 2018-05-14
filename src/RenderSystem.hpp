@@ -22,6 +22,8 @@ public:
 
 	glm::vec3 calculateReflection(Scene &scene, Hit &hit, int bounceCount);
 
+	glm::vec3 calculateRefraction(Scene &scene, Hit &hit, int bounceCount);
+
 	std::string fileName = "output.png";
 
 };

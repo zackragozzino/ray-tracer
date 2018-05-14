@@ -14,6 +14,8 @@ public:
 
 	Ray getReflectedRay();
 
+	Ray getRefractedRay();
+
 	bool hit;
 	Ray ray;
 	float t_val;

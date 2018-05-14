@@ -38,7 +38,9 @@ private:
 
 	static GeomObject* parseTriangle(std::istringstream & iss);
 
-	static void parseFinish(std::stringstream & iss, GeomObject & object);
+	static void parsePigment(std::stringstream & Stream, GeomObject & object);
+
+	static void parseFinish(std::stringstream & Stream, GeomObject & object);
 
 	static glm::vec3 Vector(std::stringstream & Stream);
 

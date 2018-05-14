@@ -42,9 +42,11 @@ glm::vec3 RenderSystem::calculateColor(Scene &scene, Ray &ray, int bounceCount)
 
 		glm::vec3 blinnPhongColor = calculateBlinnPhong(scene, hit);
 		glm::vec3 reflectionColor = calculateReflection(scene, hit, bounceCount);
+		glm::vec3 refractionColor = calculateRefraction(scene, hit, bounceCount);
 
-		color += blinnPhongColor * (1 - hit.hitObject->finish.reflection);
-		color += reflectionColor * hit.hitObject->finish.reflection;
+		color += blinnPhongColor * (1 - hit.hitObject->finish.filter) * (1 - hit.hitObject->finish.reflection);
+		color += reflectionColor * (1 - hit.hitObject->finish.filter) * hit.hitObject->finish.reflection;
+		color += refractionColor * (hit.hitObject->finish.filter);
 	}
 
 	return color;
@@ -105,6 +107,24 @@ glm::vec3 RenderSystem::calculateReflection(Scene & scene, Hit & hit, int bounce
 	reflectionColor = calculateColor(scene, reflection, bounceCount - 1) * hit.color;
 
 	return reflectionColor;
+}
+
+glm::vec3 RenderSystem::calculateRefraction(Scene & scene, Hit & hit, int bounceCount)
+{
+	glm::vec3 refractionColor = glm::vec3(0, 0, 0);
+
+	if (hit.hitObject->finish.filter == 0)
+		return refractionColor;
+
+	Ray refraction = hit.getRefractedRay();
+	Hit refractionHit = Hit(scene, refraction);
+
+	if (!refractionHit.hit)
+		return refractionColor;
+
+	refractionColor = calculateColor(scene, refraction, bounceCount - 1);
+
+	return refractionColor;
 }
 
 
