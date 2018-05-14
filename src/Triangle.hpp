@@ -2,14 +2,18 @@
 
 #include "GeomObject.hpp"
 
-class Plane : public GeomObject {
+class Triangle : public GeomObject {
 public:
-	Plane();
+	Triangle();
+
+	glm::vec3 p1;
+	glm::vec3 p2;
+	glm::vec3 p3;
 
 	float intersect(const Ray &ray);
 	glm::vec3 getNormal(glm::vec3 point);
-	glm::vec3 normal;
-	float distance;
-
 	void print();
+
 };
+
+

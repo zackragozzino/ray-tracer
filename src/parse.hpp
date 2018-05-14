@@ -4,6 +4,7 @@
 #include "GeomObject.hpp"
 #include "Sphere.hpp"
 #include "Plane.hpp"
+#include "Triangle.hpp"
 #include "Scene.hpp"
 #include "Camera.hpp"
 #include <vector>
@@ -34,6 +35,8 @@ private:
 	static GeomObject* parseSphere(std::istringstream & iss);
 
 	static GeomObject* parsePlane(std::istringstream & iss);
+
+	static GeomObject* parseTriangle(std::istringstream & iss);
 
 	static void parseFinish(std::stringstream & iss, GeomObject & object);
 

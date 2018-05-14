@@ -38,6 +38,8 @@ std::vector<GeomObject*> Parse::parseString(std::string const & filestream, Scen
 			scene.objects.push_back(Parse::parseSphere(iss));
 		else if (token == "plane")
 			scene.objects.push_back(Parse::parsePlane(iss));
+		else if (token == "triangle")
+			scene.objects.push_back(Parse::parseTriangle(iss));
 
         //else
             //std::cout << token << std::endl;
@@ -197,6 +199,45 @@ GeomObject * Parse::parsePlane(std::istringstream & iss)
 	parseFinish(Stream, *plane);
 
 	return plane;
+}
+
+GeomObject * Parse::parseTriangle(std::istringstream & iss)
+{
+	Triangle *triangle = new Triangle;
+	std::string token;
+	std::stringstream Stream;
+	
+	std::getline(iss, token);
+	//Get p1
+	std::getline(iss, token);
+	Stream.str(token);
+	triangle->p1 = Vector(Stream);
+
+	//Get p2
+	std::getline(iss, token);
+	Stream.str(token);
+	triangle->p2 = Vector(Stream);
+
+	//Get p3
+	std::getline(iss, token);
+	Stream.str(token);
+	triangle->p3 = Vector(Stream);
+
+	//Get the color vector
+	iss >> token;
+	validateToken("pigment", token);
+	std::getline(iss, token);
+	Stream.str(token);
+	triangle->color = Vector(Stream);
+
+	//Get the finish info
+	iss >> token;
+	validateToken("finish", token);
+	std::getline(iss, token);
+	Stream.str(token);
+	parseFinish(Stream, *triangle);
+	
+	return triangle;
 }
 
 void Parse::parseFinish(std::stringstream & Stream, GeomObject & object) {
