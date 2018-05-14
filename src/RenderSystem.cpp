@@ -44,9 +44,13 @@ glm::vec3 RenderSystem::calculateColor(Scene &scene, Ray &ray, int bounceCount)
 		glm::vec3 reflectionColor = calculateReflection(scene, hit, bounceCount);
 		glm::vec3 refractionColor = calculateRefraction(scene, hit, bounceCount);
 
-		color += blinnPhongColor * (1 - hit.hitObject->finish.filter) * (1 - hit.hitObject->finish.reflection);
-		color += reflectionColor * (1 - hit.hitObject->finish.filter) * hit.hitObject->finish.reflection;
-		color += refractionColor * (hit.hitObject->finish.filter);
+        float localContribution = (1 - hit.hitObject->finish.filter) * (1 - hit.hitObject->finish.reflection);
+        float reflectionContribution = (1 - hit.hitObject->finish.filter) * hit.hitObject->finish.reflection;
+        float refractionContribution = hit.hitObject->finish.filter;
+
+		color += blinnPhongColor * localContribution;
+        color += reflectionColor * reflectionContribution;
+        color += refractionColor * refractionContribution;
 	}
 
 	return color;
