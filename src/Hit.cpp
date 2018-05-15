@@ -40,15 +40,13 @@ Ray Hit::getRefractedRay()
 {
 	float n1, n2;
 	glm::vec3 refractionNormal;
+
+    n1 = 1;
+    n2 = hitObject->finish.ior;
+    refractionNormal = normal;
 	
-	//Ray is entering media
-	if (dot(normal, ray.direction) < 0) {
-		n1 = 1;
-		n2 = hitObject->finish.ior;
-		refractionNormal = normal;
-	}
 	//Ray is exiting media
-	else {
+	if (dot(normal, ray.direction) > 0) {
 		n1 = hitObject->finish.ior;
 		n2 = 1;
 		refractionNormal = -normal;
