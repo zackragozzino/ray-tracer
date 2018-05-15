@@ -51,7 +51,7 @@ Ray Hit::getRefractedRay()
 	}
 
 	float dirDotNorm = dot(ray.direction, refractionNormal);
-	glm::vec3 refractedDir = glm::normalize(snellRatio*(ray.direction - dirDotNorm * refractionNormal) - refractionNormal * sqrt(1 - (snellRatio*snellRatio) * (1 - (dirDotNorm*dirDotNorm))));
+	glm::vec3 refractedDir = glm::normalize(snellRatio*(ray.direction - dirDotNorm * refractionNormal) - refractionNormal * (float)sqrt(1 - (snellRatio*snellRatio) * (1 - (dirDotNorm*dirDotNorm))));
 
 	return Ray(refractedDir * EPSILON + hitPos, refractedDir);
 }
