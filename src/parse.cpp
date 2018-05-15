@@ -88,8 +88,6 @@ Camera * Parse::parseCamera(std::istringstream & iss)
 	iss >> token;
 	validateToken("}", token);
 
-	//camera->print();
-
 	return camera;
 }
 
@@ -116,8 +114,6 @@ Light * Parse::parseLight(std::istringstream & iss)
 	Stream2.str(token);
 	light->color = Vector(Stream2);
 
-	//light->print();
-
 	return light;
 }
 
@@ -130,7 +126,6 @@ GeomObject * Parse::parseSphere(std::istringstream & iss)
 
 	//Get the center vector
 	std::getline(iss, token);
-
 	
 	Stream.str(token);
 	sphere->center = Vector(Stream);
@@ -151,9 +146,6 @@ GeomObject * Parse::parseSphere(std::istringstream & iss)
 	std::getline(iss, token);
 	Stream.str(token);
 	parsePigment(Stream, *sphere);
-	/*
-	sphere->color = Vector(Stream);
-	*/
 
 	//Get the finish info
 	iss >> token;
@@ -161,6 +153,9 @@ GeomObject * Parse::parseSphere(std::istringstream & iss)
 	std::getline(iss, token);
 	Stream.str(token);
 	parseFinish(Stream, *sphere);
+
+	//For fixing weird parsing case
+	iss >> token;
 
     return sphere;
 }
@@ -192,7 +187,7 @@ GeomObject * Parse::parsePlane(std::istringstream & iss)
 	validateToken("pigment", token);
 	std::getline(iss, token);
 	Stream.str(token);
-	plane->color = Vector(Stream);
+	parsePigment(Stream, *plane);
 
 	//Get the finish info
 	iss >> token;

@@ -38,25 +38,22 @@ Ray Hit::getReflectedRay()
 
 Ray Hit::getRefractedRay()
 {
-	float n1, n2;
-	glm::vec3 refractionNormal;
-
-    n1 = 1;
-    n2 = hitObject->finish.ior;
-    refractionNormal = normal;
+    float n1 = 1;
+    float n2 = hitObject->finish.ior;
+    glm::vec3 refractionNormal = normal;
 	
-	//Ray is exiting media
+	float snellRatio = n1 / n2;
+	
+	//If ray is exiting media
 	if (dot(normal, ray.direction) > 0) {
-		n1 = hitObject->finish.ior;
-		n2 = 1;
+		snellRatio = n2 / n1;
 		refractionNormal = -normal;
 	}
 
 	float dirDotNorm = dot(ray.direction, refractionNormal);
-	float snellRatio = n1 / n2;
 
 	glm::vec3 snellPart1 = snellRatio * (ray.direction - dirDotNorm * refractionNormal) - refractionNormal;
-	float snellPart2 = sqrt(1 - (snellRatio*snellRatio) * (1 - dirDotNorm*dirDotNorm));
+	float snellPart2 = (float)sqrt( 1 - (snellRatio*snellRatio) * (1 - (dirDotNorm*dirDotNorm)) );
 
 	glm::vec3 refractedDir = glm::normalize(snellPart1 * snellPart2);
 
