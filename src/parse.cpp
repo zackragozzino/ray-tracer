@@ -154,8 +154,6 @@ GeomObject * Parse::parseSphere(std::istringstream & iss)
 	Stream.str(token);
 	parseFinish(Stream, *sphere);
 
-	//For fixing weird parsing case
-	iss >> token;
 
     return sphere;
 }

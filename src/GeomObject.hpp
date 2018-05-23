@@ -25,6 +25,7 @@ public:
 	glm::vec3 color;
 	Finish finish;
 	std::string type;
+	glm::mat4 ModelMatrix;
 
 	void parentPrint();
 
