@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 		int x = atoi(argv[5]);
 		int y = atoi(argv[6]);
 
-		Ray ray = scene.castRay(width, height, x, y);
+		Ray ray = scene.castRay(width, height, x, y, 0, 0, 1);
 
 		std::cout << "Pixel: [" << x << ", " << y << "] ";
 		ray.print();

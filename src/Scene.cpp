@@ -4,10 +4,13 @@ Scene::Scene() {
 
 }
 
-Ray Scene::castRay(int width, int height, int x, int y) {
+Ray Scene::castRay(int width, int height, int x, int y, int ssM, int ssN, int superSamples) {
 
-	float u = -0.5 + ((x + 0.5) / width);
-	float v = -0.5 + ((y + 0.5) / height);
+	//float u = -0.5 + ((x + 0.5) / width);
+	//float v = -0.5 + ((y + 0.5) / height);
+
+    float u = -0.5 + ((x + (ssM + 0.5) / superSamples)) / width;
+    float v = -0.5 + ((y + (ssN + 0.5) / superSamples)) / height;
 
 	glm::vec3 w = glm::normalize(glm::vec3(camera->look_at - camera->location));
 

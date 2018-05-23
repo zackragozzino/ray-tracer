@@ -13,7 +13,7 @@ public:
 	std::vector<Light *> lights;
 	std::vector<GeomObject *> objects;
 
-	Ray castRay(int width, int height, int x, int y);
+	Ray castRay(int width, int height, int x, int y, int ssM, int ssN, int superSamples);
 
 	
 	void print();

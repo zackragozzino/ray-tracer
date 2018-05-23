@@ -6,6 +6,7 @@ void RenderSystem::render(Scene & scene, int & width, int & height)
 {
 	glm::ivec2 size = glm::ivec2(width , height);
 	const int numChannels = 3;
+    glm::vec3 color;
 
 	unsigned char *data = new unsigned char[size.x * size.y * numChannels];
 	
@@ -13,9 +14,15 @@ void RenderSystem::render(Scene & scene, int & width, int & height)
 	{
 		for (int x = 0; x < size.x; ++x)
 		{
-			Ray ray = scene.castRay(width, height, x, y);
+            color = glm::vec3(0);
+            for (int ssM = 0; ssM < superSamples; ssM++) {
+                for (int ssN = 0; ssN < superSamples; ssN++) {
+                    Ray ray = scene.castRay(width, height, x, y, ssM, ssN, superSamples);
+                    color += calculateColor(scene, ray, MAX_RAY_BOUNCES);
+                }
+            }
 
-			glm::vec3 color = calculateColor(scene, ray, MAX_RAY_BOUNCES);
+            color /= (superSamples * superSamples);
 
 			color.r = round(glm::clamp(color.r, 0.f, 1.f) * 255.f);
 			color.g = round(glm::clamp(color.g, 0.f, 1.f) * 255.f);

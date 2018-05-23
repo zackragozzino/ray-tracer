@@ -26,4 +26,6 @@ public:
 
 	std::string fileName = "output.png";
 
+    int superSamples = 3;
+
 };
