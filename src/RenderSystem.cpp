@@ -14,6 +14,7 @@ void RenderSystem::render(Scene & scene, int & width, int & height)
 	{
 		for (int x = 0; x < size.x; ++x)
 		{
+			//Super sampling for anti-aliasing
             color = glm::vec3(0);
             for (int ssM = 0; ssM < superSamples; ssM++) {
                 for (int ssN = 0; ssN < superSamples; ssN++) {
@@ -55,7 +56,7 @@ glm::vec3 RenderSystem::calculateColor(Scene &scene, Ray &ray, int bounceCount)
         float reflectionContribution = (1 - hit.hitObject->finish.filter) * hit.hitObject->finish.reflection;
         float refractionContribution = hit.hitObject->finish.filter;
 
-		color +=  blinnPhongColor * localContribution;
+		color += blinnPhongColor * localContribution;
         color += reflectionColor * reflectionContribution;
         color += refractionColor * refractionContribution;
 	}
