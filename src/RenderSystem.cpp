@@ -52,9 +52,13 @@ glm::vec3 RenderSystem::calculateColor(Scene &scene, Ray &ray, int bounceCount)
 		glm::vec3 reflectionColor = calculateReflection(scene, hit, bounceCount);
 		glm::vec3 refractionColor = calculateRefraction(scene, hit, bounceCount);
 
+		float fresnelReflectance = 0.f;
+		if (fresnel)
+			fresnelReflectance = calculateFresnel(hit);
+
         float localContribution = (1 - hit.hitObject->finish.filter) * (1 - hit.hitObject->finish.reflection);
-        float reflectionContribution = (1 - hit.hitObject->finish.filter) * hit.hitObject->finish.reflection;
-        float refractionContribution = hit.hitObject->finish.filter;
+        float reflectionContribution = (1 - hit.hitObject->finish.filter) * hit.hitObject->finish.reflection + (hit.hitObject->finish.filter) * (fresnelReflectance);
+        float refractionContribution = hit.hitObject->finish.filter * (1 - fresnelReflectance);
 
 		color += blinnPhongColor * localContribution;
         color += reflectionColor * reflectionContribution;
@@ -134,9 +138,35 @@ glm::vec3 RenderSystem::calculateRefraction(Scene & scene, Hit & hit, int bounce
 	if (!refractionHit.hit)
 		return refractionColor;
 
-	refractionColor = calculateColor(scene, refraction, bounceCount - 1) * hit.color;
+	refractionColor = calculateColor(scene, refraction, bounceCount - 1);
+
+	if(beers)
+		refractionColor *= calculateBeers(hit, refractionHit);
 
 	return refractionColor;
+}
+
+glm::vec3 RenderSystem::calculateBeers(Hit & hit, Hit & refractionHit)
+{
+	float d = glm::distance(refractionHit.hitPos, hit.hitPos);
+	glm::vec3 absorbance = (1.f - hit.color) * (0.15f) * -d;
+	glm::vec3 attenuation = exp(absorbance);
+
+	return attenuation;
+}
+
+float RenderSystem::calculateFresnel(Hit & hit)
+{
+	float n = hit.hitObject->finish.ior;
+	glm::vec3 norm = hit.normal;
+
+	if (dot(norm, hit.ray.direction) > 0) {
+		norm = -norm;
+	}
+
+	float incidence = ((n - 1.f)*(n - 1.f)) / ((n + 1.f) * (n + 1.f));
+
+	return ( incidence + (1.f - incidence) * pow(1.f - dot(norm, -hit.ray.direction), 5.f) );
 }
 
 

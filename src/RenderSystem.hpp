@@ -24,7 +24,15 @@ public:
 
 	glm::vec3 calculateRefraction(Scene &scene, Hit &hit, int bounceCount);
 
+	glm::vec3 calculateBeers(Hit &hit, Hit & refractionHit);
+
+	float calculateFresnel(Hit &hit);
+
 	std::string fileName = "output.png";
+
+	bool fresnel;
+
+	bool beers;
 
     int superSamples = 1;
 
