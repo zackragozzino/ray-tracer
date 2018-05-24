@@ -84,7 +84,6 @@ int main(int argc, char **argv)
 			}
 		}
 
-
         int width = atoi(argv[3]);
         int height = atoi(argv[4]);
         renderSystem.render(scene, width, height);
