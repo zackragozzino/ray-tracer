@@ -67,7 +67,6 @@ int main(int argc, char **argv)
     else if (!strcmp(argv[1], "render")) {
 		
 		//Check for the ss flag
-        std::cout << "ok1" << std::endl;
         if (argc > 5) {
             if (std::string(argv[5]).find("-ss") != std::string::npos) {
                 //Get the number of super samples
