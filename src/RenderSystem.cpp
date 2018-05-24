@@ -140,6 +140,8 @@ glm::vec3 RenderSystem::calculateRefraction(Scene & scene, Hit & hit, int bounce
 
 	refractionColor = calculateColor(scene, refraction, bounceCount - 1);
 
+    //only mult by color when entering
+
 	if (beers)
 		refractionColor *= calculateBeers(hit, refractionHit);
 	else
