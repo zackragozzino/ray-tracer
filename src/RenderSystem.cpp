@@ -47,7 +47,6 @@ glm::vec3 RenderSystem::calculateColor(Scene &scene, Ray &ray, int bounceCount)
 
 	if (hit.hit && bounceCount > 0) {
 
-
 		glm::vec3 blinnPhongColor = calculateBlinnPhong(scene, hit);
 		glm::vec3 reflectionColor = calculateReflection(scene, hit, bounceCount);
 		glm::vec3 refractionColor = calculateRefraction(scene, hit, bounceCount);

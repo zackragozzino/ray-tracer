@@ -65,21 +65,23 @@ int main(int argc, char **argv)
 
     }
     else if (!strcmp(argv[1], "render")) {
-		
-		//Check for the ss flag
-		if (std::string(argv[5]).find("-ss") != std::string::npos) {
-			//Get the number of super samples
-			size_t last_index = std::string(argv[5]).find_last_not_of("0123456789");
-			std::string ss = std::string(argv[5]).substr(last_index + 1);
-			renderSystem.superSamples = atoi(ss.c_str());
-		}
-		//Check for fresnel flag
-		else if (std::string(argv[5]).find("-fresnel") != std::string::npos) {
-			renderSystem.fresnel = true;
-		}
-		//Check for beers flag
-		else if (std::string(argv[5]).find("-beers") != std::string::npos) {
-			renderSystem.beers = true;
+
+		if (argc > 5) {
+			//Check for the ss flag
+			if (std::string(argv[5]).find("-ss") != std::string::npos) {
+				//Get the number of super samples
+				size_t last_index = std::string(argv[5]).find_last_not_of("0123456789");
+				std::string ss = std::string(argv[5]).substr(last_index + 1);
+				renderSystem.superSamples = atoi(ss.c_str());
+			}
+			//Check for fresnel flag
+			else if (std::string(argv[5]).find("-fresnel") != std::string::npos) {
+				renderSystem.fresnel = true;
+			}
+			//Check for beers flag
+			else if (std::string(argv[5]).find("-beers") != std::string::npos) {
+				renderSystem.beers = true;
+			}
 		}
 
 

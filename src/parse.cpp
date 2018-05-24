@@ -3,8 +3,8 @@
 
 // is this all the headers?
 #include <iostream>
-#include <limits>
 #include <fstream>
+#include "glm/gtc/matrix_transform.hpp"
 
 std::vector<GeomObject*> Parse::parseFile(std::ifstream & file, Scene &scene)
 {
@@ -154,6 +154,8 @@ GeomObject * Parse::parseSphere(std::istringstream & iss)
 	Stream.str(token);
 	parseFinish(Stream, *sphere);
 
+	parseTransforms(iss, *sphere);
+
 
     return sphere;
 }
@@ -234,6 +236,42 @@ GeomObject * Parse::parseTriangle(std::istringstream & iss)
 	parseFinish(Stream, *triangle);
 	
 	return triangle;
+}
+
+void Parse::parseTransforms(std::istringstream & iss, GeomObject & object)
+{
+	std::string token;
+	std::stringstream Stream;
+	
+	glm::vec3 scale, rotation, translation;
+
+	object.ModelMatrix = glm::mat4(1.0f);
+
+	//Get scale
+	std::getline(iss, token);
+	Stream.str(token);
+	//std::cout << token << std::endl;
+	scale = Vector(Stream);
+	object.ModelMatrix = glm::scale(glm::mat4(1.0f), scale) * object.ModelMatrix;
+
+	//Get rotation
+	std::getline(iss, token);
+	Stream.str(token);
+	//std::cout << token << std::endl;
+	rotation = glm::radians(Vector(Stream));
+	object.ModelMatrix = glm::rotate(glm::mat4(1.0f), rotation.z, glm::vec3(0, 0, 1)) * object.ModelMatrix;
+	object.ModelMatrix = glm::rotate(glm::mat4(1.0f), rotation.y, glm::vec3(0, 1, 0)) * object.ModelMatrix;
+	object.ModelMatrix = glm::rotate(glm::mat4(1.0f), rotation.x, glm::vec3(1, 0, 0)) * object.ModelMatrix;
+
+
+	//Get translation
+	std::getline(iss, token);
+	Stream.str(token);
+	//std::cout << token << std::endl;
+	translation = Vector(Stream);
+	object.ModelMatrix = glm::translate(glm::mat4(1.0f), translation) * object.ModelMatrix;
+	object.invModelMatrix = glm::inverse(object.ModelMatrix);
+
 }
 
 void Parse::parsePigment(std::stringstream & Stream, GeomObject & object)

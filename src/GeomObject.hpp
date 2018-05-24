@@ -26,6 +26,7 @@ public:
 	Finish finish;
 	std::string type;
 	glm::mat4 ModelMatrix;
+	glm::mat4 invModelMatrix;
 
 	void parentPrint();
 
