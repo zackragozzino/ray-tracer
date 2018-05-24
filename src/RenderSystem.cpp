@@ -116,7 +116,8 @@ glm::vec3 RenderSystem::calculateReflection(Scene & scene, Hit & hit, int bounce
 {
 	glm::vec3 reflectionColor = glm::vec3(0, 0, 0);
 
-	if (hit.hitObject->finish.reflection == 0)
+    //If there's not reflection and we're not doing fresnel on translucent objects
+	if (hit.hitObject->finish.reflection == 0 && (hit.hitObject->finish.filter == 0 && !fresnel))
 		return reflectionColor;
 
 	Ray reflection = hit.getReflectedRay();
@@ -142,10 +143,15 @@ glm::vec3 RenderSystem::calculateRefraction(Scene & scene, Hit & hit, int bounce
 
     //only mult by color when entering
 
-	if (beers)
-		refractionColor *= calculateBeers(hit, refractionHit);
-	else
-		refractionColor *= hit.color;
+    if (beers) {
+        refractionColor *= calculateBeers(hit, refractionHit);
+        if (dot(hit.normal, hit.ray.direction) > 0)
+            refractionColor *= hit.color;
+    }
+    //If exiting
+    else if ( !(dot(hit.normal, hit.ray.direction) > 0) ) {
+        refractionColor *= hit.color;
+    }
 
 	return refractionColor;
 }
