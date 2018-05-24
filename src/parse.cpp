@@ -25,7 +25,7 @@ std::vector<GeomObject*> Parse::parseString(std::string const & filestream, Scen
     std::string token;
 
     while (!iss.eof()) {
-        iss >> token;
+     
 
         //Check if token is a comment
 		if (token.substr(0, 2) == "//")
@@ -41,8 +41,7 @@ std::vector<GeomObject*> Parse::parseString(std::string const & filestream, Scen
 		else if (token == "triangle")
 			scene.objects.push_back(Parse::parseTriangle(iss));
 
-        //else
-            //std::cout << token << std::endl;
+		iss >> token;
     }
 
     return std::vector<GeomObject*>();
@@ -154,8 +153,8 @@ GeomObject * Parse::parseSphere(std::istringstream & iss)
 	Stream.str(token);
 	parseFinish(Stream, *sphere);
 
+	//Check for optional transform properties
 	parseTransforms(iss, *sphere);
-
 
     return sphere;
 }
@@ -196,6 +195,9 @@ GeomObject * Parse::parsePlane(std::istringstream & iss)
 	Stream.str(token);
 	parseFinish(Stream, *plane);
 
+	//Check for optional transform properties
+	parseTransforms(iss, *plane);
+
 	return plane;
 }
 
@@ -234,6 +236,9 @@ GeomObject * Parse::parseTriangle(std::istringstream & iss)
 	std::getline(iss, token);
 	Stream.str(token);
 	parseFinish(Stream, *triangle);
+
+	//Check for optional transform properties
+	parseTransforms(iss, *triangle);
 	
 	return triangle;
 }
@@ -247,29 +252,37 @@ void Parse::parseTransforms(std::istringstream & iss, GeomObject & object)
 
 	object.ModelMatrix = glm::mat4(1.0f);
 
-	//Get scale
-	std::getline(iss, token);
-	Stream.str(token);
-	//std::cout << token << std::endl;
-	scale = Vector(Stream);
-	object.ModelMatrix = glm::scale(glm::mat4(1.0f), scale) * object.ModelMatrix;
+	while (token.compare("}")) {
 
-	//Get rotation
-	std::getline(iss, token);
-	Stream.str(token);
-	//std::cout << token << std::endl;
-	rotation = glm::radians(Vector(Stream));
-	object.ModelMatrix = glm::rotate(glm::mat4(1.0f), rotation.z, glm::vec3(0, 0, 1)) * object.ModelMatrix;
-	object.ModelMatrix = glm::rotate(glm::mat4(1.0f), rotation.y, glm::vec3(0, 1, 0)) * object.ModelMatrix;
-	object.ModelMatrix = glm::rotate(glm::mat4(1.0f), rotation.x, glm::vec3(1, 0, 0)) * object.ModelMatrix;
+		if (std::string(token).find("scale") != std::string::npos) {
+			//Get scale
+			std::getline(iss, token);
+			Stream.str(token);
+			scale = Vector(Stream);
+			object.ModelMatrix = glm::scale(glm::mat4(1.0f), scale) * object.ModelMatrix;
+		}
+		
+		else if (std::string(token).find("rotate") != std::string::npos) {
+			//Get rotation
+			std::getline(iss, token);
+			Stream.str(token);
+			rotation = glm::radians(Vector(Stream));
+			object.ModelMatrix = glm::rotate(glm::mat4(1.0f), rotation.z, glm::vec3(0, 0, 1)) * object.ModelMatrix;
+			object.ModelMatrix = glm::rotate(glm::mat4(1.0f), rotation.y, glm::vec3(0, 1, 0)) * object.ModelMatrix;
+			object.ModelMatrix = glm::rotate(glm::mat4(1.0f), rotation.x, glm::vec3(1, 0, 0)) * object.ModelMatrix;
+		}
 
+		else if (std::string(token).find("translate") != std::string::npos) {
+			//Get translation
+			std::getline(iss, token);
+			Stream.str(token);
+			translation = Vector(Stream);
+			object.ModelMatrix = glm::translate(glm::mat4(1.0f), translation) * object.ModelMatrix;
+		}
 
-	//Get translation
-	std::getline(iss, token);
-	Stream.str(token);
-	//std::cout << token << std::endl;
-	translation = Vector(Stream);
-	object.ModelMatrix = glm::translate(glm::mat4(1.0f), translation) * object.ModelMatrix;
+		iss >> token;
+	}
+
 	object.invModelMatrix = glm::inverse(object.ModelMatrix);
 
 }
