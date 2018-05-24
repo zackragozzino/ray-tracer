@@ -141,26 +141,26 @@ glm::vec3 RenderSystem::calculateRefraction(Scene & scene, Hit & hit, int bounce
 
 	refractionColor = calculateColor(scene, refraction, bounceCount - 1);
 
-    //only mult by color when entering
-
     if (beers) {
-        refractionColor *= calculateBeers(hit, refractionHit);
-        if (dot(hit.normal, hit.ray.direction) > 0)
-            refractionColor *= hit.color;
+        //If entering
+        if (dot(hit.normal, hit.ray.direction) < 0)
+            refractionColor *= calculateBeers(hit, refractionHit);
     }
-    //If exiting
+    //If entering and not beers
     else if ( !(dot(hit.normal, hit.ray.direction) > 0) ) {
         refractionColor *= hit.color;
     }
 
 	return refractionColor;
 }
-
 glm::vec3 RenderSystem::calculateBeers(Hit & hit, Hit & refractionHit)
+
 {
 	float d = glm::distance(refractionHit.hitPos, hit.hitPos);
 	glm::vec3 absorbance = (1.f - hit.color) * (0.15f) * -d;
 	glm::vec3 attenuation = exp(absorbance);
+
+    //std::cout << attenuation.x << " " << attenuation.y << " " << attenuation.z << std::endl;
 
 	return attenuation;
 }
