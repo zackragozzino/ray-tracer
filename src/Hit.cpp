@@ -1,6 +1,6 @@
 #include "Hit.hpp"
 
-const static float EPSILON = 0.0001f;
+const static float EPSILON = 0.0005f;
 
 Hit::Hit() {};
 
@@ -33,7 +33,7 @@ void Hit::checkIntersection(GeomObject * object)
 		color = object->color;
 		hitPos = ray.getIntersectionPoint(t_val);
 		objectSpacePos = objectSpaceRay.getIntersectionPoint(t_val);
-		normal = glm::vec3(glm::transpose(glm::mat4(1.0f)) * glm::vec4(hitObject->getNormal(hitPos), 0.0f));
+		normal = glm::vec3(glm::transpose(glm::mat4(1.f)) * glm::vec4(hitObject->getNormal(hitPos), 0.f));
 
 		glm::vec3 objNormal = object->getNormal(objectSpacePos);
 		glm::vec3 worldNorm = glm::vec3(glm::transpose(object->invModelMatrix) * glm::vec4(objNormal, 0.f));
