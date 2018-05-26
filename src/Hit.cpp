@@ -19,8 +19,8 @@ void Hit::checkIntersection(GeomObject * object)
 {
 
 
-	glm::vec3 p = glm::vec3(object->invModelMatrix * glm::vec4(ray.position, 1.f));
-	glm::vec3 d = glm::vec3(object->invModelMatrix * glm::vec4(ray.direction, 0.f));
+	glm::vec3 p = glm::vec3(object->invModelMatrix * glm::vec4(ray.position, 1));
+	glm::vec3 d = glm::vec3(object->invModelMatrix * glm::vec4(ray.direction, 0));
 	Ray objectSpaceRay(p, d);
 	glm::vec3 objectSpacePos;
 
@@ -33,10 +33,10 @@ void Hit::checkIntersection(GeomObject * object)
 		color = object->color;
 		hitPos = ray.getIntersectionPoint(t_val);
 		objectSpacePos = objectSpaceRay.getIntersectionPoint(t_val);
-		normal = glm::vec3(glm::transpose(glm::mat4(1.f)) * glm::vec4(hitObject->getNormal(hitPos), 0.f));
+		normal = glm::vec3(glm::transpose(glm::mat4(1.f)) * glm::vec4(hitObject->getNormal(hitPos), 0));
 
 		glm::vec3 objNormal = object->getNormal(objectSpacePos);
-		glm::vec3 worldNorm = glm::vec3(glm::transpose(object->invModelMatrix) * glm::vec4(objNormal, 0.f));
+		glm::vec3 worldNorm = glm::vec3(glm::transpose(object->invModelMatrix) * glm::vec4(objNormal, 0));
 
 		normal = glm::normalize(worldNorm);
 	}

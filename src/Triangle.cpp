@@ -48,9 +48,7 @@ glm::vec3 Triangle::getNormal(glm::vec3 point)
 	glm::vec3 U = p2 - p1;
 	glm::vec3 V = p3 - p1;
 
-	normal.x = (U.y * V.z) - (U.z * V.y);
-	normal.y = (U.z * V.x) - (U.x * V.z);
-	normal.z = (U.x - V.y) - (U.y * V.x);
+    normal = glm::cross(U, V);
 
 	return normalize(normal);
 }
