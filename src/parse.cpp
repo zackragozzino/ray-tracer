@@ -243,6 +243,14 @@ GeomObject * Parse::parseTriangle(std::istringstream & iss)
 	return triangle;
 }
 
+GeomObject * Parse::parseBox(std::istringstream & iss)
+{
+	Box *box = new Box;
+
+
+	return nullptr;
+}
+
 void Parse::parseTransforms(std::istringstream & iss, GeomObject & object)
 {
 	std::string token;
