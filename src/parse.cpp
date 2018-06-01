@@ -40,6 +40,8 @@ std::vector<GeomObject*> Parse::parseString(std::string const & filestream, Scen
 			scene.objects.push_back(Parse::parsePlane(iss));
 		else if (token == "triangle")
 			scene.objects.push_back(Parse::parseTriangle(iss));
+		else if (token == "box")
+			scene.objects.push_back(Parse::parseBox(iss));
 
 		iss >> token;
     }
@@ -246,9 +248,33 @@ GeomObject * Parse::parseTriangle(std::istringstream & iss)
 GeomObject * Parse::parseBox(std::istringstream & iss)
 {
 	Box *box = new Box;
+	std::string token;
+	std::stringstream Stream;
 
+	//Get the min and max
+	std::getline(iss, token);
+	Stream.str(token);
+	box->min = Vector(Stream);
+	box->max = Vector(Stream);
 
-	return nullptr;
+	//Get the color vector
+	iss >> token;
+	validateToken("pigment", token);
+	std::getline(iss, token);
+	Stream.str(token);
+	box->color = Vector(Stream);
+
+	//Get the finish info
+	iss >> token;
+	validateToken("finish", token);
+	std::getline(iss, token);
+	Stream.str(token);
+	parseFinish(Stream, *box);
+
+	//Check for optional transform properties
+	parseTransforms(iss, *box);
+
+	return box;
 }
 
 void Parse::parseTransforms(std::istringstream & iss, GeomObject & object)

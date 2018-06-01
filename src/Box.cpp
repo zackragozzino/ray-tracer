@@ -12,9 +12,9 @@ float Box::intersect(const Ray & ray)
 {
 	float tgmax = std::numeric_limits<float>::infinity();
 	float tgmin = -std::numeric_limits<float>::infinity();
-
+	
 	for (int i = 0; i < 3; i++) {
-		if (ray.direction[i] != 0) {
+		if (ray.direction[i] == 0) {
 			if (ray.position[i] >= this->min[i] || ray.position[i] < this->max[i])
 				return -1;
 		}
