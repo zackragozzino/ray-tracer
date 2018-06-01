@@ -26,7 +26,6 @@ std::vector<GeomObject*> Parse::parseString(std::string const & filestream, Scen
 
     while (!iss.eof()) {
      
-
         //Check if token is a comment
 		if (token.substr(0, 2) == "//")
 			std::getline(iss, token);
@@ -142,6 +141,29 @@ GeomObject * Parse::parseSphere(std::istringstream & iss)
 
 	//Get the color vector
 	iss >> token;
+
+	while (token.compare("}")) {
+		if (!strcmp(token.c_str(), "pigment")) {
+			std::getline(iss, token);
+			Stream.str(token);
+			parsePigment(Stream, *sphere);
+		}
+
+		else if (!strcmp(token.c_str(), "finish")) {
+			std::getline(iss, token);
+			Stream.str(token);
+			parseFinish(Stream, *sphere);
+		}
+
+		else if (!strcmp(token.c_str(), "scale")) {
+			parseTransforms(iss, *sphere);
+		}
+
+		iss >> token;
+	}
+
+	/*
+
 	validateToken("pigment", token);
 	std::getline(iss, token);
 	Stream.str(token);
@@ -156,6 +178,7 @@ GeomObject * Parse::parseSphere(std::istringstream & iss)
 
 	//Check for optional transform properties
 	parseTransforms(iss, *sphere);
+	*/
 
     return sphere;
 }
@@ -224,9 +247,41 @@ GeomObject * Parse::parseTriangle(std::istringstream & iss)
 	Stream.str(token);
 	triangle->p3 = Vector(Stream);
 
+/*
+	iss >> token;
+
+	while (token.compare("}")) {
+
+		//std::cout << "triangle loop: " << token << std::endl;
+		if (!strcmp(token.c_str(), "pigment")) {
+			std::getline(iss, token);
+			Stream.str(token);
+			parsePigment(Stream, *triangle);
+		}
+
+		else if (!strcmp(token.c_str(), "finish")) {
+			std::getline(iss, token);
+			Stream.str(token);
+			parseFinish(Stream, *triangle);
+		}
+
+		else if (!strcmp(token.c_str(), "scale")) {
+			std::cout << "triangle loop: " << token << std::endl;
+			parseTransforms(iss, *triangle);
+		}
+
+		iss >> token;
+
+	}
+	*/
+
+	//Check for optional transform properties
+	parseTransforms(iss, *triangle);
+	
+	
 	//Get the color vector
 	iss >> token;
-	validateToken("pigment", token);
+	//validateToken("pigment", token);
 	std::getline(iss, token);
 	Stream.str(token);
 	triangle->color = Vector(Stream);
@@ -238,8 +293,8 @@ GeomObject * Parse::parseTriangle(std::istringstream & iss)
 	Stream.str(token);
 	parseFinish(Stream, *triangle);
 
-	//Check for optional transform properties
-	parseTransforms(iss, *triangle);
+
+	
 	
 	return triangle;
 }
@@ -280,12 +335,14 @@ void Parse::parseTransforms(std::istringstream & iss, GeomObject & object)
 {
 	std::string token;
 	std::stringstream Stream;
-	
+
 	glm::vec3 scale, rotation, translation;
 
 	object.ModelMatrix = glm::mat4(1.0f);
 
-	while (token.compare("}")) {
+	int count = 0;
+
+	while (token.compare("}") && count < 3) {
 
 		if (std::string(token).find("scale") != std::string::npos) {
 			//Get scale
@@ -314,6 +371,7 @@ void Parse::parseTransforms(std::istringstream & iss, GeomObject & object)
 		}
 
 		iss >> token;
+		count++;
 	}
 
 	object.invModelMatrix = glm::inverse(object.ModelMatrix);
