@@ -86,8 +86,7 @@ Camera * Parse::parseCamera(std::istringstream & iss)
 	Stream.str(token);
 	camera->look_at = Vector(Stream);
 
-	iss >> token;
-	validateToken("}", token);
+	//iss >> token;
 
 	return camera;
 }
