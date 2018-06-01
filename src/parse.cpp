@@ -261,7 +261,7 @@ GeomObject * Parse::parseBox(std::istringstream & iss)
 	validateToken("pigment", token);
 	std::getline(iss, token);
 	Stream.str(token);
-	box->color = Vector(Stream);
+	parsePigment(Stream, *box);
 
 	//Get the finish info
 	iss >> token;
@@ -343,7 +343,7 @@ void Parse::parsePigment(std::stringstream & Stream, GeomObject & object)
 }
 
 void Parse::parseFinish(std::stringstream & Stream, GeomObject & object) {
-	std::stringbuf buf;
+	std::stringbuf buf;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 	std::stringstream bufSS;
 	std::string token;
 

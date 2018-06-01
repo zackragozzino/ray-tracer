@@ -68,4 +68,8 @@ glm::vec3 Box::getNormal(glm::vec3 point)
 
 void Box::print()
 {
+	std::cout << "- Type: Box" << std::endl;
+	printf("- Min: {%.4f %.4f %.4f}\n", min.x, min.y, min.z);
+	printf("- Max: {%.4f %.4f %.4f}\n", max.x, max.y, max.z);
+	parentPrint();
 }

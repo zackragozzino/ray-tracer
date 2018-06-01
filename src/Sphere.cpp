@@ -37,8 +37,3 @@ void Sphere::print() {
     printf("- Radius: %.4f\n", radius);
     parentPrint();
 };
-
-float intersect(const Ray & ray)
-{
-	return 0.0f;
-}
