@@ -1,4 +1,5 @@
 #include "Plane.hpp"
+#include <stdlib.h>
 
 Plane::Plane() {
 	type = "Plane";
@@ -14,6 +15,11 @@ float Plane::intersect(const Ray & ray)
 	return numerator / denominator;
 }
 ;
+
+AABB* Plane::newAABB() {
+	std::cout << "Debug: Invalid bounding box geomobject type" << std::endl;
+	exit(EXIT_FAILURE);
+}
 
 glm::vec3 Plane::getNormal(glm::vec3 point) {
 	return normal;

@@ -27,6 +27,21 @@ float Sphere::intersect(const Ray & ray)
 	return -1;
 }
 
+AABB* Sphere::newAABB() {
+	AABB* aabb = new AABB();
+	aabb->min = center;
+	aabb->max = center;
+
+	for (int axis = 0; axis <= 2; axis++) {
+		aabb->min[axis] -= radius;
+		aabb->max[axis] += radius;
+	}
+
+	aabb->transform(this->ModelMatrix);
+	return aabb;
+
+}
+
 glm::vec3 Sphere::getNormal(glm::vec3 point) {
 	return glm::normalize(point - center);
 }

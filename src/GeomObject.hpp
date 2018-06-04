@@ -3,7 +3,9 @@
 #include <stdio.h>
 #include <iostream>
 #include "glm/glm.hpp"
+#include "AABB.hpp"
 #include "Ray.hpp"
+
 
 class GeomObject {
 
@@ -27,9 +29,11 @@ public:
 	std::string type;
 	glm::mat4 ModelMatrix;
 	glm::mat4 invModelMatrix;
+	glm::vec3 center;
 
 	void parentPrint();
 
+	virtual AABB *newAABB() = 0;
 	virtual float intersect(const Ray &ray) = 0;
 	virtual glm::vec3 getNormal(glm::vec3 point) = 0;
 	virtual void print() = 0;

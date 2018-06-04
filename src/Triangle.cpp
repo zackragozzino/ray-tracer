@@ -42,6 +42,15 @@ float Triangle::intersect(const Ray & ray)
 		return T;
 }
 
+AABB* Triangle::newAABB() {
+	AABB* aabb = new AABB;
+	aabb->AddPoint(p1);
+	aabb->AddPoint(p2);
+	aabb->AddPoint(p3);
+	aabb->transform(ModelMatrix);
+	return aabb;
+}
+
 glm::vec3 Triangle::getNormal(glm::vec3 point)
 {
 	glm::vec3 normal;

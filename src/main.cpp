@@ -82,6 +82,26 @@ int main(int argc, char **argv)
 			else if (std::string(argv[5]).find("-beers") != std::string::npos) {
 				renderSystem.beers = true;
 			}
+
+			else if (std::string(argv[5]).find("-sds") != std::string::npos) {
+				std::vector<GeomObject *> aabbObjects;
+				std::vector<GeomObject *> planes;
+
+				for(GeomObject *object : scene.objects){
+					
+					if(!strcmp("Plane", object->type.c_str())){
+						planes.push_back(object);
+					}
+					else {
+						aabbObjects.push_back(object);
+					}
+				}
+
+				scene.objects = planes;
+				scene.sds = true;
+				scene.rootNode = new Scene::bvh_node;
+				scene.recursiveTreeBuild(aabbObjects, 0, scene.rootNode);
+			}
 		}
 
         int width = atoi(argv[3]);

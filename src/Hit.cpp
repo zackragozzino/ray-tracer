@@ -13,6 +13,14 @@ Hit::Hit(Scene & scene, Ray & ray)
 	for (int i = 0; i < scene.objects.size(); i++) {
 		checkIntersection(scene.objects[i]);
 	}
+
+	if (scene.sds) {
+		GeomObject* object = scene.traverseTree(scene.rootNode, ray);
+		if (object != nullptr) {
+			checkIntersection(object);
+		}
+
+	}
 }
 
 void Hit::checkIntersection(GeomObject * object)

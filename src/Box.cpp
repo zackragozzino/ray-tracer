@@ -47,6 +47,14 @@ float Box::intersect(const Ray & ray)
 		return tgmax;
 }
 
+AABB* Box::newAABB() {
+	AABB *aabb = new AABB();
+	aabb->min = this->min;
+	aabb->max = this->max;
+	aabb->transform(ModelMatrix);
+	return aabb;
+}
+
 glm::vec3 Box::getNormal(glm::vec3 point)
 {
 

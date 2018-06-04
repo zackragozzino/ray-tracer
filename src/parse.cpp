@@ -247,6 +247,9 @@ GeomObject * Parse::parseTriangle(std::istringstream & iss)
 	Stream.str(token);
 	triangle->p3 = Vector(Stream);
 
+	//Set center
+	triangle->center = (triangle->p1 + triangle->p2 + triangle->p3) / 3.0f;
+
 /*
 	iss >> token;
 
@@ -310,6 +313,9 @@ GeomObject * Parse::parseBox(std::istringstream & iss)
 	Stream.str(token);
 	box->min = Vector(Stream);
 	box->max = Vector(Stream);
+
+	//Set the center
+	box->center = (box->min + box->max) / 2.0f;
 
 	//Get the color vector
 	iss >> token;
