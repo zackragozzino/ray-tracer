@@ -18,7 +18,14 @@ float Plane::intersect(const Ray & ray)
 
 AABB* Plane::newAABB() {
 	std::cout << "Debug: Invalid bounding box geomobject type" << std::endl;
-	exit(EXIT_FAILURE);
+	//exit(EXIT_FAILURE);
+	return nullptr;
+}
+
+glm::vec3 Plane::getCenter() {
+	std::cout << "Debug: Plane geomtype does not have a center" << std::endl;
+	//exit(EXIT_FAILURE);
+	return glm::vec3();
 }
 
 glm::vec3 Plane::getNormal(glm::vec3 point) {

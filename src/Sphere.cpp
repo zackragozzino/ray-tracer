@@ -39,7 +39,10 @@ AABB* Sphere::newAABB() {
 
 	aabb->transform(this->ModelMatrix);
 	return aabb;
+}
 
+glm::vec3 Sphere::getCenter() {
+	return center;
 }
 
 glm::vec3 Sphere::getNormal(glm::vec3 point) {

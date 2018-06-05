@@ -41,6 +41,9 @@ void Scene::recursiveTreeBuild(std::vector<GeomObject *> objects, int axis, bvh_
 	parent->objs = objects;
 	instantiateAABB(parent);
 	*/
+
+
+
 	
 	if (objects.size() <= 1) {
         parent->objs = objects;
@@ -48,7 +51,7 @@ void Scene::recursiveTreeBuild(std::vector<GeomObject *> objects, int axis, bvh_
         return;
     }
 
-	sort(parent->objs, axis);
+	sort(objects, axis);
 
     parent->left = new bvh_node;
     parent->right = new bvh_node;
@@ -82,12 +85,12 @@ void Scene::instantiateAABB(bvh_node* parent) {
 
 void Scene::sort(std::vector<GeomObject *> objects, int axis) {
 	// Selection sort
-	/*for (int i = 0; i < objects.size(); i++) {
-		glm::vec3 icen = objects[i]->center;
+	for (unsigned int i = 0; i < objects.size(); i++) {
+		glm::vec3 icen = objects[i]->getCenter();
 		unsigned int min = i;
 		unsigned int j = i + 1;
-		for (j = 0; j < objects.size(); j++) {
-			glm::vec3 jcen = objects[j]->center;
+		for (; j < objects.size(); j++) {
+			glm::vec3 jcen = objects[j]->getCenter();
 			if (jcen[axis] < icen[axis]) {
 				min = j;
 			}
@@ -97,8 +100,15 @@ void Scene::sort(std::vector<GeomObject *> objects, int axis) {
 			objects[i] = objects[min];
 			objects[min] = temp;
 		}
-	}*/
-	
+	}
+	std::cout << objects.size() << std::endl;
+	std::cout << "??????????????????" << std::endl;
+	for (unsigned int i = 0; i < objects.size(); i++) {
+		glm::vec3 icen = objects[i]->getCenter();
+		std::cout << glm::to_string(icen) << std::endl;
+	}
+	std::cout << "______________" << std::endl;
+	/*
 	//Insertion sort based on online pseudocode
 	int i, j;
 	GeomObject * key;
@@ -114,27 +124,118 @@ void Scene::sort(std::vector<GeomObject *> objects, int axis) {
 		}
 		objects[j + 1] = key;
 	}
+	*/
+}
+
+void Scene::printTree(bvh_node *node, std::string type) {
+	
+	glm::vec3 min = node->aabb.min;
+	glm::vec3 max = node->aabb.max;
+
+	std::cout << type << ":" << std::endl;
+	std::cout << "- min: " << glm::to_string(min) << std::endl;
+	std::cout << "- max: " << glm::to_string(max) << std::endl;
+
+	if (node->objs.size() == 1)
+		std::cout << "Type: " << node->objs[0]->type.c_str() << std::endl;
+	else
+		std::cout << "branch - " << node->objs.size() << " objects" <<std::endl;
+
+	std::cout << "--------------------" << std::endl;
+
+	if(node->left != nullptr)
+		printTree(node->left, type + "->left");
+	if(node->right != nullptr)
+		printTree(node->right, type + "->right");
 }
 
 GeomObject* Scene::traverseTree(bvh_node *node, Ray &ray) {
 
-	// Base Case
-	if (node->objs.size() == 1) {
-		return node->objs[0];
+	/*std::cout << "~~~ Objects ~~~" << std::endl;
+	std::cout << "Size: " << node->objs.size() << std::endl;
+	for (int i = 0; i < node->objs.size(); i++) {
+		std::cout << node->objs[i]->type.c_str() << std::endl;
 	}
-	std::cout << node->objs.size() << std::endl;
-	// Traversal	
+	std::cout << "~~~~~~~~~~~~" << std::endl;
+	*/
+	// Base Case
+	
+
+	//std::cout << "left: " << leftT << std::endl;
+	//std::cout << "right: " << rightT << std::endl;
+
 	if (node->aabb.intersect(ray) > 0.0005f) {
-		//std::cout << node->left->objs.size() << std::endl;
-		if (node->left != nullptr) {
-			return traverseTree(node->left, ray);
+
+		if (node->objs.size() == 1) {
+			//std::cout << "Returning: " << node->objs[0]->type.c_str() << std::endl;
+			return node->objs[0];
 		}
-		if (node->right != nullptr) {
-			return traverseTree(node->right, ray);
+
+		GeomObject* leftObj = nullptr;
+		GeomObject* rightObj = nullptr;
+
+		leftObj = traverseTree(node->left, ray);
+		rightObj = traverseTree(node->right, ray);
+
+		//std::cout << "Testing... " << std::endl;
+
+		if (leftObj != nullptr && rightObj != nullptr) {
+			//std::cout << "left: " << leftT << std::endl;
+			//std::cout << "right: " << rightT << std::endl;
+
+			float leftT = node->left->aabb.intersect(ray);
+			float rightT = node->right->aabb.intersect(ray);
+
+			return leftT > rightT ? leftObj : rightObj;
 		}
+		else {
+			//std::cout << "0 or 1 hit" << std::endl;
+			return leftObj != nullptr ? leftObj : rightObj;
+		}
+	
 	}
 
 	return nullptr;
+
+	/*
+	//std::cout << node->objs.size() << std::endl;
+	// Traversal	
+	if (node->aabb.intersect(ray) > 0.0005f) {
+		//std::cout << node->left->objs.size() << std::endl;
+		GeomObject* leftObject;
+		GeomObject* rightObject;
+
+		float leftT = node->left->aabb.intersect(ray);
+		float rightT = node->right->aabb.intersect(ray);
+
+		//std::cout << "left: " << leftT << std::endl;
+		//std::cout << "right: " << rightT << std::endl;
+
+		if (leftT > 0.0005f || rightT > 0.0005f) {
+			//std::cout << "left: " << leftT << std::endl;
+			//std::cout << "right: " << rightT << std::endl;
+			return leftT > rightT ? traverseTree(node->left, ray) : traverseTree(node->right, ray);
+		}
+
+
+		if (node->left != nullptr) {
+			//std::cout << "Left..." << std::endl;
+			//leftObject = traverseTree(node->left, ray);
+			//return traverseTree(node->left, ray);
+		}
+		if (node->right != nullptr) {
+			//std::cout << "Right..." << std::endl;
+			//rightObject = traverseTree(node->right, ray);
+			//return traverseTree(node->right, ray);
+		}
+
+		//return leftObject->intersect(ray) > rightObject->intersect(ray) ? leftObject : rightObject;
+
+
+	}
+	return nullptr;
+	*/
+	
 }
 
 void Scene::print()

@@ -29,12 +29,12 @@ public:
 	std::string type;
 	glm::mat4 ModelMatrix;
 	glm::mat4 invModelMatrix;
-	glm::vec3 center;
 
 	void parentPrint();
 
 	virtual AABB *newAABB() = 0;
 	virtual float intersect(const Ray &ray) = 0;
 	virtual glm::vec3 getNormal(glm::vec3 point) = 0;
+	virtual glm::vec3 getCenter() = 0;
 	virtual void print() = 0;
 };

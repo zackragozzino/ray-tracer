@@ -22,8 +22,17 @@ void AABB::AddPoint(glm::vec3 pt) {
 
 void AABB::AddBox(AABB *other) {
 
-	AddPoint(other->min);
-	AddPoint(other->max);
+	//AddPoint(other->min);
+	//AddPoint(other->max);
+
+	// Min
+	this->min.x = std::min(this->min.x, std::min(other->max.x, other->min.x));
+	this->min.y = std::min(this->min.y, std::min(other->max.y, other->min.y));
+	this->min.z = std::min(this->min.z, std::min(other->max.z, other->min.z));
+	// Max
+	this->max.x = std::max(this->max.x, std::max(other->max.x, other->min.x));
+	this->max.y = std::max(this->max.y, std::max(other->max.y, other->min.y));
+	this->max.z = std::max(this->max.z, std::max(other->max.z, other->min.z));
 
 	this->center = (min + max) / 2.f;
 }

@@ -51,6 +51,10 @@ AABB* Triangle::newAABB() {
 	return aabb;
 }
 
+glm::vec3 Triangle::getCenter() {
+	return center;
+}
+
 glm::vec3 Triangle::getNormal(glm::vec3 point)
 {
 	glm::vec3 normal;

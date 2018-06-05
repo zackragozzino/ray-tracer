@@ -5,21 +5,23 @@
 #include "Light.hpp"
 #include "AABB.hpp"
 #include <vector>
+#include <String>
+#include "glm/ext.hpp"
 
 class Scene {
 public:
 
 	class bvh_node {
 	public:
-		bvh_node* left;
-		bvh_node* right;
+		bvh_node* left = nullptr;
+		bvh_node* right = nullptr; 
 		std::vector<GeomObject *> objs;
 		
 		AABB aabb;
 	};
 
 	Scene();
-
+	void printTree(bvh_node *node, std::string type);
 	Camera *camera;
 	std::vector<Light *> lights;
 	std::vector<GeomObject *> objects;

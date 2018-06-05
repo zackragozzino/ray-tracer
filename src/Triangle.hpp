@@ -13,6 +13,7 @@ public:
 
 	float intersect(const Ray &ray);
 	AABB* newAABB();
+	glm::vec3 getCenter();
 	glm::vec3 getNormal(glm::vec3 point);
 	void print();
 

@@ -101,6 +101,7 @@ int main(int argc, char **argv)
 				scene.sds = true;
 				scene.rootNode = new Scene::bvh_node;
 				scene.recursiveTreeBuild(aabbObjects, 0, scene.rootNode);
+				scene.printTree(scene.rootNode, "root");
 			}
 		}
 

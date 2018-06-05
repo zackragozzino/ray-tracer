@@ -137,7 +137,6 @@ GeomObject * Parse::parseSphere(std::istringstream & iss)
 	Stream2.ignore(std::numeric_limits<std::streamsize>::max(), ',');
 	Stream2 >> token;
 	sphere->radius = strtof(token.c_str(), NULL);
-	
 
 	//Get the color vector
 	iss >> token;
@@ -313,6 +312,8 @@ GeomObject * Parse::parseBox(std::istringstream & iss)
 	Stream.str(token);
 	box->min = Vector(Stream);
 	box->max = Vector(Stream);
+
+	glm::vec3 calculatedCenter;
 
 	//Set the center
 	box->center = (box->min + box->max) / 2.0f;

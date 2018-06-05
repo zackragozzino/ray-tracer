@@ -55,6 +55,10 @@ AABB* Box::newAABB() {
 	return aabb;
 }
 
+glm::vec3 Box::getCenter() {
+	return (min + max) / 2.0f;
+}
+
 glm::vec3 Box::getNormal(glm::vec3 point)
 {
 
