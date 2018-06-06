@@ -101,13 +101,7 @@ void Scene::sort(std::vector<GeomObject *> objects, int axis) {
 			objects[min] = temp;
 		}
 	}
-	std::cout << objects.size() << std::endl;
-	std::cout << "??????????????????" << std::endl;
-	for (unsigned int i = 0; i < objects.size(); i++) {
-		glm::vec3 icen = objects[i]->getCenter();
-		std::cout << glm::to_string(icen) << std::endl;
-	}
-	std::cout << "______________" << std::endl;
+
 	/*
 	//Insertion sort based on online pseudocode
 	int i, j;
