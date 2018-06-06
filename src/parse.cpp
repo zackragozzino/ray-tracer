@@ -139,8 +139,9 @@ GeomObject * Parse::parseSphere(std::istringstream & iss)
 	sphere->radius = strtof(token.c_str(), NULL);
 
 	//Get the color vector
-	iss >> token;
+	/*iss >> token;
 
+    
 	while (token.compare("}")) {
 		if (!strcmp(token.c_str(), "pigment")) {
 			std::getline(iss, token);
@@ -161,8 +162,9 @@ GeomObject * Parse::parseSphere(std::istringstream & iss)
 		iss >> token;
 	}
 
-	/*
+	*/
 
+    iss >> token;
 	validateToken("pigment", token);
 	std::getline(iss, token);
 	Stream.str(token);
@@ -174,10 +176,10 @@ GeomObject * Parse::parseSphere(std::istringstream & iss)
 	std::getline(iss, token);
 	Stream.str(token);
 	parseFinish(Stream, *sphere);
-
+    
 	//Check for optional transform properties
 	parseTransforms(iss, *sphere);
-	*/
+	
 
     return sphere;
 }

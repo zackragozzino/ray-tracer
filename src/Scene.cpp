@@ -83,7 +83,7 @@ void Scene::instantiateAABB(bvh_node* parent) {
 	}
 }
 
-void Scene::sort(std::vector<GeomObject *> objects, int axis) {
+void Scene::sort(std::vector<GeomObject *> &objects, int axis) {
 	// Selection sort
 	for (unsigned int i = 0; i < objects.size(); i++) {
 		glm::vec3 icen = objects[i]->getCenter();
@@ -158,12 +158,14 @@ GeomObject* Scene::traverseTree(bvh_node *node, Ray &ray) {
 	//std::cout << "left: " << leftT << std::endl;
 	//std::cout << "right: " << rightT << std::endl;
 
-	if (node->aabb.intersect(ray) > 0.0005f) {
+    if (node->objs.size() == 1) {
+        if (node->objs[0]->intersect(ray) > 0.0005f)
+            return node->objs[0];
+        else
+            return nullptr;
+    }
 
-		if (node->objs.size() == 1) {
-			//std::cout << "Returning: " << node->objs[0]->type.c_str() << std::endl;
-			return node->objs[0];
-		}
+	if (node->aabb.intersect(ray) > 0.0005f) {
 
 		GeomObject* leftObj = nullptr;
 		GeomObject* rightObj = nullptr;
@@ -171,19 +173,14 @@ GeomObject* Scene::traverseTree(bvh_node *node, Ray &ray) {
 		leftObj = traverseTree(node->left, ray);
 		rightObj = traverseTree(node->right, ray);
 
-		//std::cout << "Testing... " << std::endl;
-
 		if (leftObj != nullptr && rightObj != nullptr) {
-			//std::cout << "left: " << leftT << std::endl;
-			//std::cout << "right: " << rightT << std::endl;
 
-			float leftT = node->left->aabb.intersect(ray);
-			float rightT = node->right->aabb.intersect(ray);
+			float leftT = leftObj->intersect(ray);
+			float rightT = rightObj->intersect(ray);
 
 			return leftT > rightT ? leftObj : rightObj;
 		}
 		else {
-			//std::cout << "0 or 1 hit" << std::endl;
 			return leftObj != nullptr ? leftObj : rightObj;
 		}
 	

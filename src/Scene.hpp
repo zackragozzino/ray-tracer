@@ -31,7 +31,7 @@ public:
 	Ray castRay(int width, int height, int x, int y, int ssM, int ssN, int superSamples);
 	
 	//AABB methods
-	void sort(std::vector<GeomObject *> objects, int axis);
+	void sort(std::vector<GeomObject *> &objects, int axis);
 	void recursiveTreeBuild(std::vector<GeomObject *> objects, int axis, bvh_node *parent);
 	void instantiateAABB(bvh_node* parent);
 	GeomObject* traverseTree(bvh_node *node, Ray &ray);
