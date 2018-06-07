@@ -86,11 +86,19 @@ void Scene::instantiateAABB(bvh_node* parent) {
 void Scene::sort(std::vector<GeomObject *> &objects, int axis) {
 	// Selection sort
 	for (unsigned int i = 0; i < objects.size(); i++) {
-		glm::vec3 icen = objects[i]->getCenter();
+		//glm::vec3 icen = objects[i]->getCenter();
+		glm::vec3 icen = glm::vec3(objects[i]->ModelMatrix * glm::vec4(objects[i]->getCenter(), 1.f));
+		//glm::vec3 icen = glm::vec3(centerTransform[3][0], centerTransform[3][1], centerTransform[3][2]);
+		//glm::vec3 icen = glm::vec3(glm::transpose(objects[i]->invModelMatrix) * glm::vec4(objects[i]->getCenter(), 0));
+
 		unsigned int min = i;
 		unsigned int j = i + 1;
 		for (; j < objects.size(); j++) {
-			glm::vec3 jcen = objects[j]->getCenter();
+			//glm::vec3 jcen = objects[j]->getCenter();
+			//glm::mat4 centerTransform = objects[j]->invModelMatrix * glm::vec4(objects[j]->getCenter(), 0);
+			glm::vec3 jcen = glm::vec3(objects[j]->ModelMatrix * glm::vec4(objects[j]->getCenter(), 1.f));
+			//glm::vec3 icen = glm::vec3(centerTransform[3][0], centerTransform[3][1], centerTransform[3][2]);
+			//glm::vec3 jcen = glm::vec3(glm::transpose(objects[i]->invModelMatrix) * glm::vec4(objects[i]->getCenter(), 0));
 			if (jcen[axis] < icen[axis]) {
 				min = j;
 			}
@@ -101,6 +109,15 @@ void Scene::sort(std::vector<GeomObject *> &objects, int axis) {
 			objects[min] = temp;
 		}
 	}
+	
+	/*
+	std::cout << "\n---------------------------" << std::endl;
+	for (int i = 0; i < objects.size(); i++) {
+		glm::vec3 icen = glm::vec3(objects[i]->ModelMatrix * glm::vec4(objects[i]->getCenter(), 1.f));
+		std::cout << "Type: " << objects[i]->type.c_str() << "- " << glm::to_string(icen) << std::endl;
+		//std::cout << "Matrix: " << glm::to_string(objects[i]->ModelMatrix) << std::endl;
+	}
+	*/
 
 	/*
 	//Insertion sort based on online pseudocode
@@ -159,7 +176,10 @@ GeomObject* Scene::traverseTree(bvh_node *node, Ray &ray) {
 	//std::cout << "right: " << rightT << std::endl;
 
     if (node->objs.size() == 1) {
-        if (node->objs[0]->intersect(ray) > 0.0005f)
+		glm::vec3 p = glm::vec3(node->objs[0]->invModelMatrix * glm::vec4(ray.position, 1));
+		glm::vec3 d = glm::vec3(node->objs[0]->invModelMatrix * glm::vec4(ray.direction, 0));
+		Ray objectSpaceRay(p, d);
+        if (node->objs[0]->intersect(objectSpaceRay) > 0.0005f)
             return node->objs[0];
         else
             return nullptr;
@@ -178,7 +198,7 @@ GeomObject* Scene::traverseTree(bvh_node *node, Ray &ray) {
 			float leftT = leftObj->intersect(ray);
 			float rightT = rightObj->intersect(ray);
 
-			return leftT > rightT ? leftObj : rightObj;
+			return leftT < rightT ? leftObj : rightObj;
 		}
 		else {
 			return leftObj != nullptr ? leftObj : rightObj;
@@ -187,45 +207,6 @@ GeomObject* Scene::traverseTree(bvh_node *node, Ray &ray) {
 	}
 
 	return nullptr;
-
-	/*
-	//std::cout << node->objs.size() << std::endl;
-	// Traversal	
-	if (node->aabb.intersect(ray) > 0.0005f) {
-		//std::cout << node->left->objs.size() << std::endl;
-		GeomObject* leftObject;
-		GeomObject* rightObject;
-
-		float leftT = node->left->aabb.intersect(ray);
-		float rightT = node->right->aabb.intersect(ray);
-
-		//std::cout << "left: " << leftT << std::endl;
-		//std::cout << "right: " << rightT << std::endl;
-
-		if (leftT > 0.0005f || rightT > 0.0005f) {
-			//std::cout << "left: " << leftT << std::endl;
-			//std::cout << "right: " << rightT << std::endl;
-			return leftT > rightT ? traverseTree(node->left, ray) : traverseTree(node->right, ray);
-		}
-
-
-		if (node->left != nullptr) {
-			//std::cout << "Left..." << std::endl;
-			//leftObject = traverseTree(node->left, ray);
-			//return traverseTree(node->left, ray);
-		}
-		if (node->right != nullptr) {
-			//std::cout << "Right..." << std::endl;
-			//rightObject = traverseTree(node->right, ray);
-			//return traverseTree(node->right, ray);
-		}
-
-		//return leftObject->intersect(ray) > rightObject->intersect(ray) ? leftObject : rightObject;
-
-
-	}
-	return nullptr;
-	*/
 	
 }
 

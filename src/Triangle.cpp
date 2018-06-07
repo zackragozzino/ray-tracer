@@ -44,7 +44,7 @@ float Triangle::intersect(const Ray & ray)
 
 AABB* Triangle::newAABB() {
 	AABB* aabb = new AABB;
-	aabb->AddPoint(p1);
+	aabb->Reset(p1);
 	aabb->AddPoint(p2);
 	aabb->AddPoint(p3);
 	aabb->transform(ModelMatrix);

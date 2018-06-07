@@ -29,13 +29,9 @@ float Sphere::intersect(const Ray & ray)
 
 AABB* Sphere::newAABB() {
 	AABB* aabb = new AABB();
-	aabb->min = center;
-	aabb->max = center;
 
-	for (int axis = 0; axis <= 2; axis++) {
-		aabb->min[axis] -= radius;
-		aabb->max[axis] += radius;
-	}
+	aabb->Reset(center - radius);
+	aabb->AddPoint(center + radius);
 
 	aabb->transform(this->ModelMatrix);
 	return aabb;

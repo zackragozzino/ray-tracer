@@ -47,6 +47,8 @@ private:
 
 	static void parseFinish(std::stringstream & Stream, GeomObject & object);
 
+	static void parseComponents(std::istringstream & iss, GeomObject & object);
+
 	static glm::vec3 Vector(std::stringstream & Stream);
 
 	static void validateToken(std::string const & expected, std::string const & actual);

@@ -140,7 +140,6 @@ GeomObject * Parse::parseSphere(std::istringstream & iss)
 
 	//Get the color vector
 	/*iss >> token;
-
     
 	while (token.compare("}")) {
 		if (!strcmp(token.c_str(), "pigment")) {
@@ -160,10 +159,10 @@ GeomObject * Parse::parseSphere(std::istringstream & iss)
 		}
 
 		iss >> token;
-	}
+	}*/
 
-	*/
-
+	
+	/*
     iss >> token;
 	validateToken("pigment", token);
 	std::getline(iss, token);
@@ -179,7 +178,9 @@ GeomObject * Parse::parseSphere(std::istringstream & iss)
     
 	//Check for optional transform properties
 	parseTransforms(iss, *sphere);
-	
+	*/
+
+	parseComponents(iss, *sphere);
 
     return sphere;
 }
@@ -383,6 +384,8 @@ void Parse::parseTransforms(std::istringstream & iss, GeomObject & object)
 		count++;
 	}
 
+
+
 	object.invModelMatrix = glm::inverse(object.ModelMatrix);
 
 }
@@ -457,6 +460,66 @@ void Parse::parseFinish(std::stringstream & Stream, GeomObject & object) {
 		}
 	}
 	
+}
+
+void Parse::parseComponents(std::istringstream & iss, GeomObject & object)
+{
+	std::string token;
+	std::stringstream Stream;
+
+	glm::vec3 scale, rotation, translation;
+
+	object.ModelMatrix = glm::mat4(1.0f);
+
+	while ( token.compare("}") ) {
+
+		if (!strcmp(token.c_str(), "pigment")) {
+			std::getline(iss, token);
+			Stream.str(token);
+			parsePigment(Stream, object);
+		}
+
+		else if (!strcmp(token.c_str(), "finish")) {
+			std::getline(iss, token);
+			Stream.str(token);
+			parseFinish(Stream, object);
+		}
+
+		else if (std::string(token).find("scale") != std::string::npos) {
+			//Get scale
+			std::getline(iss, token);
+			Stream.str(token);
+			scale = Vector(Stream);
+			object.ModelMatrix = glm::scale(glm::mat4(1.0f), scale) * object.ModelMatrix;
+		}
+
+		else if (std::string(token).find("rotate") != std::string::npos) {
+			//Get rotation
+			std::getline(iss, token);
+			Stream.str(token);
+			rotation = glm::radians(Vector(Stream));
+			object.ModelMatrix = glm::rotate(glm::mat4(1.0f), rotation.z, glm::vec3(0, 0, 1)) * object.ModelMatrix;
+			object.ModelMatrix = glm::rotate(glm::mat4(1.0f), rotation.y, glm::vec3(0, 1, 0)) * object.ModelMatrix;
+			object.ModelMatrix = glm::rotate(glm::mat4(1.0f), rotation.x, glm::vec3(1, 0, 0)) * object.ModelMatrix;
+		}
+
+		else if (std::string(token).find("translate") != std::string::npos) {
+			//Get translation
+			std::getline(iss, token);
+			Stream.str(token);
+			translation = Vector(Stream);
+			object.ModelMatrix = glm::translate(glm::mat4(1.0f), translation) * object.ModelMatrix;
+		}
+
+		iss >> token;
+	}
+	/*
+	std::cout << "Rotate: " << glm::to_string(rotation) << std::endl;
+	std::cout << "Translate: " << glm::to_string(scale) << std::endl;
+	std::cout << "Scale: " << glm::to_string(translation) << std::endl;
+	*/
+
+	object.invModelMatrix = glm::inverse(object.ModelMatrix);
 }
 
 glm::vec3 Parse::Vector(std::stringstream & Stream)
