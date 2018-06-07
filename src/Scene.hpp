@@ -5,7 +5,6 @@
 #include "Light.hpp"
 #include "AABB.hpp"
 #include <vector>
-#include <String>
 #include "glm/ext.hpp"
 
 class Scene {
