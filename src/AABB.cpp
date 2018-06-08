@@ -1,7 +1,10 @@
 #include "AABB.hpp"
 #include <algorithm>
 
-AABB::AABB(){ }
+AABB::AABB(){ 
+    this->min = glm::vec3(std::numeric_limits<float>::max());
+    this->max = glm::vec3(std::numeric_limits<float>::min());
+}
 
 void AABB::Reset(glm::vec3 pt) {
 	this->min = this->max = pt;
@@ -79,7 +82,6 @@ std::vector<glm::vec3> AABB::compute_8_vertices() {
 	vertices.push_back(glm::vec3(min.x, max.y, max.z));
 	vertices.push_back(glm::vec3(max.x, max.y, max.z));
 
-
 	return vertices;
 }
 
@@ -87,8 +89,8 @@ void AABB::transform(glm::mat4 &M) {
 
 	std::vector<glm::vec3> vertices = compute_8_vertices();
 
-	this->min = glm::vec3(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
-	this->max = -min;
+	this->min = glm::vec3(std::numeric_limits<float>::max());
+	this->max = glm::vec3(std::numeric_limits<float>::min());
 
 	for (int i = 0; i < vertices.size(); i++) {
 		vertices[i] = glm::vec3(M * glm::vec4(vertices[i], 1.f));
