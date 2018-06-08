@@ -25,26 +25,6 @@ Ray Scene::castRay(int width, int height, int x, int y, int ssM, int ssN, int su
 
 void Scene::recursiveTreeBuild(std::vector<GeomObject *> objects, int axis, bvh_node *parent) {
 
-	/*if (objects.size() > 1) {
-		sort(parent->objs, axis);
-
-		parent->left = new bvh_node;
-		parent->right = new bvh_node;
-		
-		
-		std::vector<GeomObject *> leftObjects(objects.begin(), objects.begin() + objects.size() / 2);
-		recursiveTreeBuild(leftObjects, (axis + 1) % 3, parent->left);
-
-		std::vector<GeomObject *> rightObjects(objects.begin() + objects.size() / 2, objects.end());
-		recursiveTreeBuild(rightObjects, (axis + 1) % 3, parent->right);
-	}
-	parent->objs = objects;
-	instantiateAABB(parent);
-	*/
-
-
-
-	
 	if (objects.size() <= 1) {
         parent->objs = objects;
 		instantiateAABB(parent);
@@ -86,19 +66,12 @@ void Scene::instantiateAABB(bvh_node* parent) {
 void Scene::sort(std::vector<GeomObject *> &objects, int axis) {
 	// Selection sort
 	for (unsigned int i = 0; i < objects.size(); i++) {
-		//glm::vec3 icen = objects[i]->getCenter();
 		glm::vec3 icen = glm::vec3(objects[i]->ModelMatrix * glm::vec4(objects[i]->getCenter(), 1.f));
-		//glm::vec3 icen = glm::vec3(centerTransform[3][0], centerTransform[3][1], centerTransform[3][2]);
-		//glm::vec3 icen = glm::vec3(glm::transpose(objects[i]->invModelMatrix) * glm::vec4(objects[i]->getCenter(), 0));
 
 		unsigned int min = i;
 		unsigned int j = i + 1;
-		for (; j < objects.size(); j++) {
-			//glm::vec3 jcen = objects[j]->getCenter();
-			//glm::mat4 centerTransform = objects[j]->invModelMatrix * glm::vec4(objects[j]->getCenter(), 0);
+		for (j=0; j < objects.size(); j++) {
 			glm::vec3 jcen = glm::vec3(objects[j]->ModelMatrix * glm::vec4(objects[j]->getCenter(), 1.f));
-			//glm::vec3 icen = glm::vec3(centerTransform[3][0], centerTransform[3][1], centerTransform[3][2]);
-			//glm::vec3 jcen = glm::vec3(glm::transpose(objects[i]->invModelMatrix) * glm::vec4(objects[i]->getCenter(), 0));
 			if (jcen[axis] < icen[axis]) {
 				min = j;
 			}
