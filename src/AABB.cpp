@@ -30,54 +30,55 @@ void AABB::AddBox(AABB *other) {
 
 float AABB::intersect(const Ray & ray)
 {
-	float tgmax = std::numeric_limits<float>::infinity();
-	float tgmin = -std::numeric_limits<float>::infinity();
+	float max = std::numeric_limits<float>::max();
+	float min = std::numeric_limits<float>::lowest();
 
 	for (int i = 0; i < 3; i++) {
 		if (ray.direction[i] == 0) {
-			if (ray.position[i] >= this->min[i] || ray.position[i] < this->max[i])
+			if (ray.position[i] < this->min[i] || ray.position[i] > this->max[i])
 				return -1;
 		}
 		else {
-			float t1 = (this->min[i] - ray.position[i]) / ray.direction[i];
-			float t2 = (this->max[i] - ray.position[i]) / ray.direction[i];
+			float tmin = (this->min[i] - ray.position[i]) / ray.direction[i];
+			float tmax = (this->max[i] - ray.position[i]) / ray.direction[i];
 
-			if (t1 > t2) {
-				float temp = t1;
-				t1 = t2;
-				t2 = temp;
+			if (tmin > tmax) {
+				float temp = tmin;
+				tmin = tmax;
+				tmax = temp;
 			}
 
-			if (t1 > tgmin)
-				tgmin = t1;
-			if (t2 < tgmax)
-				tgmax = t2;
+			if (tmin > min)
+				min = tmin;
+			if (tmax < max)
+				max = tmax;
 		}
 	}
 
-	if (tgmin > tgmax)
+	if (min > max)
 		return -1;
 
-	if (tgmax < 0)
-		return tgmin;
+	if (max < 0)
+		return -1;
 
-	if (tgmin > 0)
-		return tgmin;
+	if (min > 0)
+		return min;
 	else
-		return tgmax;
+		return max;
 }
 
 std::vector<glm::vec3> AABB::compute_8_vertices() {
 	std::vector<glm::vec3> vertices;
 
 	vertices.push_back(glm::vec3(min.x, min.y, min.z));
+    vertices.push_back(glm::vec3(max.x, min.y, min.z));
+    vertices.push_back(glm::vec3(min.x, max.y, min.z));
+    vertices.push_back(glm::vec3(max.x, max.y, min.z));
 	vertices.push_back(glm::vec3(min.x, min.y, max.z));
+    vertices.push_back(glm::vec3(max.x, min.y, max.z));
 	vertices.push_back(glm::vec3(min.x, max.y, max.z));
-	vertices.push_back(glm::vec3(min.x, max.y, min.z));
-	vertices.push_back(glm::vec3(max.x, min.y, min.z));
-	vertices.push_back(glm::vec3(max.x, min.y, max.z));
 	vertices.push_back(glm::vec3(max.x, max.y, max.z));
-	vertices.push_back(glm::vec3(max.x, max.y, min.z));
+
 
 	return vertices;
 }
@@ -88,12 +89,6 @@ void AABB::transform(glm::mat4 &M) {
 
 	this->min = glm::vec3(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
 	this->max = -min;
-	
-	/*
-	for (int i = 0; i < 8; i++) {
-		vertices[i] = glm::vec3(M * glm::vec4(vertices[i], 1.f));
-		AddPoint(vertices[i]);
-	}*/
 
 	for (int i = 0; i < vertices.size(); i++) {
 		vertices[i] = glm::vec3(M * glm::vec4(vertices[i], 1.f));
