@@ -42,14 +42,14 @@ void Scene::recursiveTreeBuild(std::vector<GeomObject *> objects, int axis, bvh_
 	std::vector<GeomObject *> rightObjects(objects.begin() + objects.size() / 2, objects.end());
 	recursiveTreeBuild(rightObjects, (axis + 1) % 3, parent->right);
 
-	parent->objs = objects;
+	//parent->objs = objects;
 	instantiateAABB(parent);
 	
 }
 
 void Scene::instantiateAABB(bvh_node* parent) {
 	// Leaf node
-	if (parent->objs.size() <= 1) {
+	if (parent->objs.size() == 1) {
 		parent->aabb.AddBox(parent->objs[0]->newAABB());
 	}
 	// Inner node
@@ -133,45 +133,47 @@ void Scene::printTree(bvh_node *node, std::string type) {
 		printTree(node->right, type + "->right");
 }
 
-GeomObject* Scene::traverseTree(bvh_node *node, Ray &ray) {
-
-	/*std::cout << "~~~ Objects ~~~" << std::endl;
+HitObject* Scene::traverseTree(bvh_node *node, Ray &ray) {
+	/*
+	std::cout << "~~~ Objects ~~~" << std::endl;
 	std::cout << "Size: " << node->objs.size() << std::endl;
 	for (int i = 0; i < node->objs.size(); i++) {
 		std::cout << node->objs[i]->type.c_str() << std::endl;
 	}
 	std::cout << "~~~~~~~~~~~~" << std::endl;
 	*/
-	// Base Case
 	
+	// Base Case
 
-	//std::cout << "left: " << leftT << std::endl;
-	//std::cout << "right: " << rightT << std::endl;
 
     if (node->objs.size() == 1) {
 		glm::vec3 p = glm::vec3(node->objs[0]->invModelMatrix * glm::vec4(ray.position, 1));
 		glm::vec3 d = glm::vec3(node->objs[0]->invModelMatrix * glm::vec4(ray.direction, 0));
 		Ray objectSpaceRay(p, d);
-        if (node->objs[0]->intersect(objectSpaceRay) > 0.0005f)
-            return node->objs[0];
+		float t_Val = node->objs[0]->intersect(objectSpaceRay);
+		
+		if (t_Val > 0.0005f) {
+			HitObject *hitObject = new HitObject;
+			hitObject->object = node->objs[0];
+			hitObject->t_Val = t_Val;
+			hitObject->objectSpacePos = objectSpaceRay.getIntersectionPoint(t_Val);
+			return hitObject;
+		}
         else
             return nullptr;
     }
 
 	if (node->aabb.intersect(ray) > 0.0005f) {
 
-		GeomObject* leftObj = nullptr;
-		GeomObject* rightObj = nullptr;
+		HitObject* leftObj = nullptr;
+		HitObject* rightObj = nullptr;
 
 		leftObj = traverseTree(node->left, ray);
 		rightObj = traverseTree(node->right, ray);
 
 		if (leftObj != nullptr && rightObj != nullptr) {
 
-			float leftT = leftObj->intersect(ray);
-			float rightT = rightObj->intersect(ray);
-
-			return leftT < rightT ? leftObj : rightObj;
+			return leftObj->t_Val < rightObj->t_Val ? leftObj : rightObj;
 		}
 		else {
 			return leftObj != nullptr ? leftObj : rightObj;

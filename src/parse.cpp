@@ -44,7 +44,7 @@ std::vector<GeomObject*> Parse::parseString(std::string const & filestream, Scen
 
 		iss >> token;
     }
-
+	std::cout << "Parsing finished" << std::endl;
     return std::vector<GeomObject*>();
 }
 

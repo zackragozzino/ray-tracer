@@ -2,8 +2,8 @@
 #include <algorithm>
 
 AABB::AABB(){ 
-    this->min = glm::vec3(std::numeric_limits<float>::max());
-    this->max = glm::vec3(std::numeric_limits<float>::min());
+    this->min = glm::vec3(std::numeric_limits<float>::infinity());
+    this->max = glm::vec3(-std::numeric_limits<float>::infinity());
 }
 
 void AABB::Reset(glm::vec3 pt) {

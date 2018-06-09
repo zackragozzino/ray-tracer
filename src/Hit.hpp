@@ -2,6 +2,7 @@
 
 #include "Scene.hpp"
 #include "GeomObject.hpp"
+#include "HitObject.hpp"
 #include <string>
 
 class Hit {
@@ -12,6 +13,8 @@ public:
 
 	void checkIntersection(GeomObject *object);
 
+	void getObjectT(GeomObject *object);
+
 	Ray getReflectedRay();
 
 	Ray getRefractedRay();
@@ -19,11 +22,12 @@ public:
 	bool hit;
 	Ray ray;
 	float t_val;
+	HitObject *hitObject;
 	glm::vec3 color;
 	glm::vec3 hitPos;
 	glm::vec3 normal;
 
-	GeomObject *hitObject = nullptr;
+	GeomObject *object = nullptr;
 
 	void print();
 

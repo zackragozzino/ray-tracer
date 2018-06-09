@@ -55,9 +55,9 @@ glm::vec3 RenderSystem::calculateColor(Scene &scene, Ray &ray, int bounceCount)
 		if (fresnel)
 			fresnelReflectance = calculateFresnel(hit);
 
-        float localContribution = (1 - hit.hitObject->finish.filter) * (1 - hit.hitObject->finish.reflection);
-        float reflectionContribution = (1 - hit.hitObject->finish.filter) * hit.hitObject->finish.reflection + (hit.hitObject->finish.filter) * (fresnelReflectance);
-        float refractionContribution = hit.hitObject->finish.filter * (1 - fresnelReflectance);
+        float localContribution = (1 - hit.object->finish.filter) * (1 - hit.object->finish.reflection);
+        float reflectionContribution = (1 - hit.object->finish.filter) * hit.object->finish.reflection + (hit.object->finish.filter) * (fresnelReflectance);
+        float refractionContribution = hit.object->finish.filter * (1 - fresnelReflectance);
 
 		color += blinnPhongColor * localContribution;
         color += reflectionColor * reflectionContribution;
@@ -69,7 +69,7 @@ glm::vec3 RenderSystem::calculateColor(Scene &scene, Ray &ray, int bounceCount)
 
 glm::vec3 RenderSystem::calculateBlinnPhong(Scene & scene, Hit & hit)
 {
-    glm::vec3 color = hit.hitObject->finish.ambient * hit.color;
+    glm::vec3 color = hit.object->finish.ambient * hit.color;
 
 	for (Light *light : scene.lights) {
 		glm::vec3 lightDir = glm::normalize(light->location - hit.hitPos);
@@ -90,8 +90,8 @@ glm::vec3 RenderSystem::calculateDiffuse(Hit &hit, Light &light) {
 	
 	float NL = std::max(0.f, glm::dot(hit.normal, lightDir));
 
-	if (NL && hit.hitObject->finish.diffuse) {
-		diffuse = hit.hitObject->finish.diffuse * NL * light.color * hit.hitObject->color;
+	if (NL && hit.object->finish.diffuse) {
+		diffuse = hit.object->finish.diffuse * NL * light.color * hit.object->color;
 	}
 
 	return diffuse;
@@ -103,9 +103,9 @@ glm::vec3 RenderSystem::calculateSpecular(Hit &hit, Light &light) {
 	glm::vec3 half = glm::normalize(lightDir - hit.ray.direction);
 	float HN = std::max(0.f, glm::dot(half, hit.normal));
 
-	if (HN && hit.hitObject->finish.specular) {
-		float r = hit.hitObject->finish.roughness * hit.hitObject->finish.roughness;
-		specular = hit.hitObject->finish.specular * hit.hitObject->color * (float)pow(HN, 2/r - 2) * light.color;
+	if (HN && hit.object->finish.specular) {
+		float r = hit.object->finish.roughness * hit.object->finish.roughness;
+		specular = hit.object->finish.specular * hit.object->color * (float)pow(HN, 2/r - 2) * light.color;
 	}
 	
 	return specular;
@@ -116,7 +116,7 @@ glm::vec3 RenderSystem::calculateReflection(Scene & scene, Hit & hit, int bounce
 	glm::vec3 reflectionColor = glm::vec3(0, 0, 0);
 
     //If there's not reflection and we're not doing fresnel on translucent objects
-	if (hit.hitObject->finish.reflection == 0 && (hit.hitObject->finish.filter == 0 && !fresnel))
+	if (hit.object->finish.reflection == 0 && (hit.object->finish.filter == 0 && !fresnel))
 		return reflectionColor;
 
 	Ray reflection = hit.getReflectedRay();
@@ -129,7 +129,7 @@ glm::vec3 RenderSystem::calculateRefraction(Scene & scene, Hit & hit, int bounce
 {
 	glm::vec3 refractionColor = glm::vec3(0, 0, 0);
 
-	if (hit.hitObject->finish.filter == 0)
+	if (hit.object->finish.filter == 0)
 		return refractionColor;
 
 	Ray refraction = hit.getRefractedRay();
@@ -166,7 +166,7 @@ glm::vec3 RenderSystem::calculateBeers(Hit & hit, Hit & refractionHit)
 
 float RenderSystem::calculateFresnel(Hit & hit)
 {
-	float n = hit.hitObject->finish.ior;
+	float n = hit.object->finish.ior;
 	glm::vec3 norm = hit.normal;
 
 	if (dot(norm, hit.ray.direction) > 0) {

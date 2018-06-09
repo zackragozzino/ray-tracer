@@ -4,6 +4,7 @@
 #include "Camera.hpp"
 #include "Light.hpp"
 #include "AABB.hpp"
+#include "HitObject.hpp"
 #include <vector>
 #include "glm/ext.hpp"
 
@@ -33,7 +34,7 @@ public:
 	void sort(std::vector<GeomObject *> &objects, int axis);
 	void recursiveTreeBuild(std::vector<GeomObject *> objects, int axis, bvh_node *parent);
 	void instantiateAABB(bvh_node* parent);
-	GeomObject* traverseTree(bvh_node *node, Ray &ray);
+	HitObject* traverseTree(bvh_node *node, Ray &ray);
 
 	
 	void print();

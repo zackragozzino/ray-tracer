@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 			glm::vec3 color = renderSystem.calculateColor(scene, ray, 6);
 
 			printf("T = %.4f\n", hit.t_val);
-			std::cout << "Object Type: " << hit.hitObject->type << std::endl;
+			std::cout << "Object Type: " << hit.object->type << std::endl;
 			std::cout << "BRDF: " << "Blinn-Phong" << std::endl;
 			printf("Color: (%.0f, %.0f, %.0f)\n", color.r, color.g, color.b);
 		}
@@ -102,6 +102,7 @@ int main(int argc, char **argv)
 				scene.rootNode = new Scene::bvh_node;
 				scene.recursiveTreeBuild(aabbObjects, 0, scene.rootNode);
 				scene.printTree(scene.rootNode, "root");
+				std::cout << "Finished building AABB tree" << std::endl;
 			}
 		}
 
