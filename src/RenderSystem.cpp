@@ -2,6 +2,9 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 void RenderSystem::render(Scene & scene, int & width, int & height)
 {
 	glm::ivec2 size = glm::ivec2(width , height);
@@ -47,7 +50,7 @@ glm::vec3 RenderSystem::calculateColor(Scene &scene, Ray &ray, int bounceCount)
 
 	if (hit.hit && bounceCount > 0) {
 
-		glm::vec3 blinnPhongColor = calculateBlinnPhong(scene, hit);
+		glm::vec3 blinnPhongColor = calculateBlinnPhong(scene, hit, bounceCount);
 		glm::vec3 reflectionColor = calculateReflection(scene, hit, bounceCount);
 		glm::vec3 refractionColor = calculateRefraction(scene, hit, bounceCount);
 
@@ -67,9 +70,19 @@ glm::vec3 RenderSystem::calculateColor(Scene &scene, Ray &ray, int bounceCount)
 	return color;
 }
 
-glm::vec3 RenderSystem::calculateBlinnPhong(Scene & scene, Hit & hit)
+glm::vec3 RenderSystem::calculateBlinnPhong(Scene & scene, Hit & hit, int bounceCount)
 {
-    glm::vec3 color = hit.object->finish.ambient * hit.color;
+	glm::vec3 color;
+	if (!gi) {
+		color = hit.object->finish.ambient * hit.color;
+	}
+	else {
+		if (gi_bounces < bounceCount)
+			bounceCount = gi_bounces;
+		else
+			bounceCount--;
+		color = calculateGI(scene, hit, bounceCount);
+	}
 
 	for (Light *light : scene.lights) {
 		glm::vec3 lightDir = glm::normalize(light->location - hit.hitPos);
@@ -152,6 +165,49 @@ glm::vec3 RenderSystem::calculateRefraction(Scene & scene, Hit & hit, int bounce
 
 	return refractionColor;
 }
+glm::vec3 RenderSystem::calculateGI(Scene & scene, Hit & hit, int bounceCount)
+{
+	glm::vec3 giColor = glm::vec3(0, 0, 0);
+	int samples = gi_samples;
+	
+	if (gi_bounces - bounceCount > 0) {
+		samples /= ((gi_bounces - bounceCount) * 8);
+	}
+
+	float angle = glm::acos(glm::dot(glm::vec3(0, 0, 1), hit.normal));
+	glm::vec3 axis = glm::cross(glm::vec3(0, 0, 1), hit.normal);
+	glm::mat4 matrix = glm::rotate(glm::mat4(1.0f), angle, axis);
+
+	float sqrtSamples = std::sqrt(samples);
+	float ratio = sqrtSamples / samples;
+
+	for (float x = 0.f; x <= samples; x += sqrtSamples) {
+		for (float y = 0.f; y <= samples; y += sqrtSamples) {
+			float u = x / samples + ratio * (rand() / (float)RAND_MAX);
+			float v = y / samples + ratio * (rand() / (float)RAND_MAX);
+
+			glm::vec3 samplePt = calculateCosineWeightedPoint(u, v, matrix);
+			Ray sampleRay(hit.hitPos + samplePt * 0.0001f, samplePt);
+			giColor += calculateColor(scene, sampleRay, bounceCount);
+		}
+	}
+
+	return giColor / (float)samples;
+}
+
+glm::vec3 RenderSystem::calculateCosineWeightedPoint(float u, float v, glm::mat4 & matrix)
+{
+	float radial = sqrt(u);
+	float theta = 2.0 * M_PI * v;
+
+	float x = radial * glm::cos(theta);
+	float y = radial * glm::sin(theta);
+
+	glm::vec3 weightedPoint = glm::vec3(x, y, sqrt(1 - u));
+	return glm::vec3(matrix * glm::vec4(weightedPoint, 1.0));
+}
+
+
 glm::vec3 RenderSystem::calculateBeers(Hit & hit, Hit & refractionHit)
 
 {

@@ -44,7 +44,7 @@ std::vector<GeomObject*> Parse::parseString(std::string const & filestream, Scen
 
 		iss >> token;
     }
-	std::cout << "Parsing finished" << std::endl;
+
     return std::vector<GeomObject*>();
 }
 
@@ -234,20 +234,30 @@ GeomObject * Parse::parseTriangle(std::istringstream & iss)
 	std::stringstream Stream;
 	
 	std::getline(iss, token);
-	//Get p1
-	std::getline(iss, token);
-	Stream.str(token);
-	triangle->p1 = Vector(Stream);
 
-	//Get p2
-	std::getline(iss, token);
-	Stream.str(token);
-	triangle->p2 = Vector(Stream);
+	if (!strcmp(token.c_str(), " {")) {
+		//Get p1
+		std::getline(iss, token);
+		Stream.str(token);
+		triangle->p1 = Vector(Stream);
 
-	//Get p3
-	std::getline(iss, token);
-	Stream.str(token);
-	triangle->p3 = Vector(Stream);
+		//Get p2
+		std::getline(iss, token);
+		Stream.str(token);
+		triangle->p2 = Vector(Stream);
+
+		//Get p3
+		std::getline(iss, token);
+		Stream.str(token);
+		triangle->p3 = Vector(Stream);
+	}
+	else {
+		Stream.str(token);
+
+		triangle->p1 = Vector(Stream);
+		triangle->p2 = Vector(Stream);
+		triangle->p3 = Vector(Stream);
+	}
 
 	//Set center
 	triangle->center = (triangle->p1 + triangle->p2 + triangle->p3) / 3.0f;
@@ -279,6 +289,7 @@ GeomObject * Parse::parseTriangle(std::istringstream & iss)
 
 	}
 	*/
+	/*
 
 	//Check for optional transform properties
 	parseTransforms(iss, *triangle);
@@ -297,8 +308,8 @@ GeomObject * Parse::parseTriangle(std::istringstream & iss)
 	std::getline(iss, token);
 	Stream.str(token);
 	parseFinish(Stream, *triangle);
-
-
+	*/
+	parseComponents(iss, *triangle);
 	
 	
 	return triangle;
@@ -321,6 +332,7 @@ GeomObject * Parse::parseBox(std::istringstream & iss)
 	//Set the center
 	box->center = (box->min + box->max) / 2.0f;
 
+	/*
 	//Get the color vector
 	iss >> token;
 	validateToken("pigment", token);
@@ -337,6 +349,9 @@ GeomObject * Parse::parseBox(std::istringstream & iss)
 
 	//Check for optional transform properties
 	parseTransforms(iss, *box);
+	*/
+
+	parseComponents(iss, *box);
 
 	return box;
 }

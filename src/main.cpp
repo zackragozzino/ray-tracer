@@ -83,6 +83,10 @@ int main(int argc, char **argv)
 				renderSystem.beers = true;
 			}
 
+			else if (std::string(argv[5]).find("-gi") != std::string::npos) {
+				renderSystem.gi = true;
+			}
+
 			else if (std::string(argv[5]).find("-sds") != std::string::npos) {
 				std::vector<GeomObject *> aabbObjects;
 				std::vector<GeomObject *> planes;

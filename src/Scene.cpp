@@ -172,7 +172,6 @@ HitObject* Scene::traverseTree(bvh_node *node, Ray &ray) {
 		rightObj = traverseTree(node->right, ray);
 
 		if (leftObj != nullptr && rightObj != nullptr) {
-
 			return leftObj->t_Val < rightObj->t_Val ? leftObj : rightObj;
 		}
 		else {

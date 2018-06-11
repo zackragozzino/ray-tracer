@@ -14,7 +14,7 @@ public:
 
 	glm::vec3 calculateColor(Scene &scene, Ray &ray, int bounceCount);
 
-	glm::vec3 calculateBlinnPhong(Scene &scene, Hit &hit);
+	glm::vec3 calculateBlinnPhong(Scene &scene, Hit &hit, int bounceCount);
 
 	glm::vec3 calculateDiffuse(Hit &hit, Light &light);
 
@@ -23,6 +23,10 @@ public:
 	glm::vec3 calculateReflection(Scene &scene, Hit &hit, int bounceCount);
 
 	glm::vec3 calculateRefraction(Scene &scene, Hit &hit, int bounceCount);
+	
+	glm::vec3 calculateGI(Scene &scene, Hit &hit, int bounceCount);
+
+	glm::vec3 calculateCosineWeightedPoint(float u, float v, glm::mat4 & matrix);
 
 	glm::vec3 calculateBeers(Hit &hit, Hit & refractionHit);
 
@@ -33,6 +37,10 @@ public:
 	bool fresnel;
 
 	bool beers;
+
+	bool gi;
+	int gi_samples = 128;
+	int gi_bounces = 2;
 
     int superSamples = 1;
 
