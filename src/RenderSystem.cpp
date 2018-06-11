@@ -166,22 +166,22 @@ glm::vec3 RenderSystem::calculateGI(Scene & scene, Hit & hit, int bounceCount)
 {
 	glm::vec3 giColor = glm::vec3(0, 0, 0);
 	int samples = gi_samples;
-	float sqrtSamples = std::sqrt(samples);
-	float ratio = sqrtSamples / samples;
-	
-	if (gi_bounces - bounceCount > 0) {
-		samples /= ((gi_bounces - bounceCount) * 8);
-	}
 
 	glm::vec3 upVec = glm::vec3(0, 0, 1);
 	float angle = glm::acos(glm::dot(upVec, hit.normal));
 	glm::vec3 axis = glm::cross(upVec, hit.normal);
 	glm::mat4 matrix = glm::rotate(glm::mat4(1.0f), angle, axis);
 
+	if (gi_bounces - bounceCount > 0)
+		samples /= ((gi_bounces - bounceCount) * 8);
+
+	float sqrtSamples = std::sqrt(samples);
+	float ratio = sqrtSamples / samples;
+
 	for (float x = 0.0f; x <= samples; x += sqrtSamples) {
 		for (float y = 0.0f; y <= samples; y += sqrtSamples) {
-			float u = x / samples + ratio * (rand() / (float)RAND_MAX);
-			float v = y / samples + ratio * (rand() / (float)RAND_MAX);
+			float u = (x / samples) + ratio * (rand() / (float)RAND_MAX);
+			float v = (y / samples) + ratio * (rand() / (float)RAND_MAX);
 
 			glm::vec3 samplePt = calculateCosineWeightedPoint(u, v, matrix);
 			Ray sampleRay(hit.hitPos + samplePt * 0.0001f, samplePt);
