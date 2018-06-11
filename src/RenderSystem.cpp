@@ -77,10 +77,7 @@ glm::vec3 RenderSystem::calculateBlinnPhong(Scene & scene, Hit & hit, int bounce
 		color = hit.object->finish.ambient * hit.color;
 	}
 	else {
-		if (gi_bounces < bounceCount)
-			bounceCount = gi_bounces;
-		else
-			bounceCount--;
+		bounceCount = gi_bounces < bounceCount ? gi_bounces : bounceCount-1;
 		color = calculateGI(scene, hit, bounceCount);
 	}
 
@@ -169,20 +166,20 @@ glm::vec3 RenderSystem::calculateGI(Scene & scene, Hit & hit, int bounceCount)
 {
 	glm::vec3 giColor = glm::vec3(0, 0, 0);
 	int samples = gi_samples;
+	float sqrtSamples = std::sqrt(samples);
+	float ratio = sqrtSamples / samples;
 	
 	if (gi_bounces - bounceCount > 0) {
 		samples /= ((gi_bounces - bounceCount) * 8);
 	}
 
-	float angle = glm::acos(glm::dot(glm::vec3(0, 0, 1), hit.normal));
-	glm::vec3 axis = glm::cross(glm::vec3(0, 0, 1), hit.normal);
+	glm::vec3 upVec = glm::vec3(0, 0, 1);
+	float angle = glm::acos(glm::dot(upVec, hit.normal));
+	glm::vec3 axis = glm::cross(upVec, hit.normal);
 	glm::mat4 matrix = glm::rotate(glm::mat4(1.0f), angle, axis);
 
-	float sqrtSamples = std::sqrt(samples);
-	float ratio = sqrtSamples / samples;
-
-	for (float x = 0.f; x <= samples; x += sqrtSamples) {
-		for (float y = 0.f; y <= samples; y += sqrtSamples) {
+	for (float x = 0.0f; x <= samples; x += sqrtSamples) {
+		for (float y = 0.0f; y <= samples; y += sqrtSamples) {
 			float u = x / samples + ratio * (rand() / (float)RAND_MAX);
 			float v = y / samples + ratio * (rand() / (float)RAND_MAX);
 

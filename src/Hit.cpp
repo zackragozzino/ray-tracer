@@ -23,7 +23,6 @@ Hit::Hit(Scene & scene, Ray & ray)
 		if (hitObject != nullptr) {
 			checkIntersection(hitObject->object);
 		}
-
 	}
 }
 
