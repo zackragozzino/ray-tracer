@@ -26,7 +26,7 @@ public:
 	
 	glm::vec3 calculateGI(Scene &scene, Hit &hit, int bounceCount);
 
-	glm::vec3 calculateCosineWeightedPoint(float u, float v, glm::mat4 & matrix);
+	glm::vec3 calculateCosineWeightedPoint(float u, float v);
 
 	glm::vec3 calculateBeers(Hit &hit, Hit & refractionHit);
 
