@@ -39,7 +39,7 @@ public:
 	bool beers;
 
 	bool gi;
-	int gi_samples = 128;
+	int gi_samples = 32;
 	int gi_bounces = 2;
 
     int superSamples = 1;
