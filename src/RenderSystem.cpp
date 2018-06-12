@@ -185,7 +185,7 @@ glm::vec3 RenderSystem::calculateGI(Scene & scene, Hit & hit, int bounceCount)
 			float gridY = y / numSamples + ratio * (rand() / (float)RAND_MAX);
 
 			glm::vec3 samplePt = calculateCosineWeightedPoint(gridX, gridY);
-			//samplePt = glm::vec3(matrix * glm::vec4(samplePt, 1.f));
+			samplePt = glm::vec3(matrix * glm::vec4(samplePt, 1.f));
 			Ray sampleRay(hit.hitPos + samplePt * 0.0001, samplePt);
 			giColor += calculateColor(scene, sampleRay, bounceCount);
 		}
