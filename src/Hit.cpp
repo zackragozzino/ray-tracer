@@ -3,7 +3,7 @@
 const static float EPSILON = 0.0005f;
 
 Hit::Hit() {
-	
+	hitObject = new HitObject;
 };
 
 Hit::Hit(Scene & scene, Ray & ray)
@@ -37,6 +37,7 @@ void Hit::checkIntersection(GeomObject * object)
 	float intersection_t = object->intersect(objectSpaceRay);
 	*/
 	
+
 	if (hitObject->t_Val > EPSILON && hitObject->t_Val < t_val) {
 		hit = true;
 		t_val = hitObject->t_Val;

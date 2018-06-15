@@ -90,7 +90,7 @@ void AABB::transform(glm::mat4 &M) {
 	std::vector<glm::vec3> vertices = compute_8_vertices();
 
 	this->min = glm::vec3(std::numeric_limits<float>::max());
-	this->max = glm::vec3(std::numeric_limits<float>::min());
+	this->max = glm::vec3(std::numeric_limits<float>::lowest());
 
 	for (int i = 0; i < vertices.size(); i++) {
 		vertices[i] = glm::vec3(M * glm::vec4(vertices[i], 1.f));

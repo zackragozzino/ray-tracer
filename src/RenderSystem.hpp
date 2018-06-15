@@ -4,6 +4,7 @@
 #include "Scene.hpp"
 #include "Hit.hpp"
 #include <algorithm>
+#include <vector>
 
 #define MAX_RAY_BOUNCES 6
 
@@ -11,6 +12,8 @@ class RenderSystem {
 public:
 
 	void render(Scene & scene, int & width, int & height);
+
+	void renderStereogram(Scene & scene, int & width, int & height);
 
 	glm::vec3 calculateColor(Scene &scene, Ray &ray, int bounceCount);
 
@@ -32,14 +35,20 @@ public:
 
 	float calculateFresnel(Hit &hit);
 
+	float reMap(float oldValue);
+
 	std::string fileName = "output.png";
 
 	bool fresnel;
 
 	bool beers;
 
+	bool SIS;
+
+	bool depthMap;
+
 	bool gi;
-	int gi_samples = 32;
+	int gi_samples = 64;
 	int gi_bounces = 2;
 
     int superSamples = 1;

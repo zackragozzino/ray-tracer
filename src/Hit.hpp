@@ -22,7 +22,7 @@ public:
 	bool hit;
 	Ray ray;
 	float t_val;
-	HitObject *hitObject;
+	HitObject *hitObject = nullptr;
 	glm::vec3 color;
 	glm::vec3 hitPos;
 	glm::vec3 normal;

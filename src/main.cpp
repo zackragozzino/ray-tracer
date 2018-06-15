@@ -65,7 +65,6 @@ int main(int argc, char **argv)
 
     }
     else if (!strcmp(argv[1], "render")) {
-
 		if (argc > 5) {
 			//Check for the ss flag
 			if (std::string(argv[5]).find("-ss") != std::string::npos) {
@@ -105,14 +104,26 @@ int main(int argc, char **argv)
 				scene.sds = true;
 				scene.rootNode = new Scene::bvh_node;
 				scene.recursiveTreeBuild(aabbObjects, 0, scene.rootNode);
-				scene.printTree(scene.rootNode, "root");
+				//scene.printTree(scene.rootNode, "root");
 				std::cout << "Finished building AABB tree" << std::endl;
+			}
+			else if (std::string(argv[5]).find("-sis") != std::string::npos) {
+				renderSystem.SIS = true;
+			}
+			else if (std::string(argv[5]).find("-dm") != std::string::npos) {
+				renderSystem.depthMap = true;
 			}
 		}
 
         int width = atoi(argv[3]);
         int height = atoi(argv[4]);
-        renderSystem.render(scene, width, height);
+
+		//Check for autostereogram flag
+		if(renderSystem.SIS || renderSystem.depthMap)
+			renderSystem.renderStereogram(scene, width, height);
+		else
+			renderSystem.render(scene, width, height);
+		
     }
 
 	return 0;
