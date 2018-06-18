@@ -20,29 +20,20 @@ Hit::Hit(Scene & scene, Ray & ray)
 
 	if (scene.sds) {
 		hitObject = scene.traverseTree(scene.rootNode, ray);
-		if (hitObject != nullptr) {
-			checkIntersection(hitObject->object);
-		}
+	    checkIntersection(hitObject->object);
 	}
 }
 
 void Hit::checkIntersection(GeomObject * object)
-{
-	/*
-	glm::vec3 p = glm::vec3(object->invModelMatrix * glm::vec4(ray.position, 1));
-	glm::vec3 d = glm::vec3(object->invModelMatrix * glm::vec4(ray.direction, 0));
-	Ray objectSpaceRay(p, d);
+{	
 
-
-	float intersection_t = object->intersect(objectSpaceRay);
-	*/
-	
-
-	if (hitObject->t_Val > EPSILON && hitObject->t_Val < t_val) {
-		hit = true;
-		t_val = hitObject->t_Val;
+	if (hitObject != nullptr && hitObject->t_Val > EPSILON && hitObject->t_Val < t_val) {
+		/*Update hit information*/
+        hit = true;
 		this->object = object;
 		color = object->color;
+        t_val = hitObject->t_Val;
+
 		hitPos = ray.getIntersectionPoint(t_val);
 		normal = glm::vec3(glm::transpose(glm::mat4(1.f)) * glm::vec4(this->object->getNormal(hitPos), 0));
 		glm::vec3 objNormal = object->getNormal(hitObject->objectSpacePos);

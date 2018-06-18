@@ -15,6 +15,10 @@ public:
 
 	void renderStereogram(Scene & scene, int & width, int & height);
 
+    unsigned char* generateNoise(glm::ivec2 size, int patternWidth, int numChannels);
+
+    unsigned char* calculateDepthMap(Scene &scene, glm::ivec2 size, int patternWidth, int numChannels);
+
 	glm::vec3 calculateColor(Scene &scene, Ray &ray, int bounceCount);
 
 	glm::vec3 calculateBlinnPhong(Scene &scene, Hit &hit, int bounceCount);

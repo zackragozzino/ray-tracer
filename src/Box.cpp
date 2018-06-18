@@ -10,41 +10,41 @@ Box::Box() : GeomObject()
 
 float Box::intersect(const Ray & ray)
 {
-	float tgmax = std::numeric_limits<float>::infinity();
-	float tgmin = -std::numeric_limits<float>::infinity();
-	
-	for (int i = 0; i < 3; i++) {
-		if (ray.direction[i] == 0) {
-			if (ray.position[i] >= this->min[i] || ray.position[i] < this->max[i])
-				return -1;
-		}
-		else {
-			float t1 = (this->min[i] - ray.position[i]) / ray.direction[i];
-			float t2 = (this->max[i] - ray.position[i]) / ray.direction[i];
+    float max = std::numeric_limits<float>::max();
+    float min = std::numeric_limits<float>::lowest();
 
-			if (t1 > t2) {
-				float temp = t1;
-				t1 = t2;
-				t2 = temp;
-			}
+    for (int i = 0; i < 3; i++) {
+        if (ray.direction[i] == 0) {
+            if (ray.position[i] < this->min[i] || ray.position[i] > this->max[i])
+                return -1;
+        }
+        else {
+            float tmin = (this->min[i] - ray.position[i]) / ray.direction[i];
+            float tmax = (this->max[i] - ray.position[i]) / ray.direction[i];
 
-			if (t1 > tgmin)
-				tgmin = t1;
-			if (t2 < tgmax)
-				tgmax = t2;
-		}
-	}
+            if (tmin > tmax) {
+                float temp = tmin;
+                tmin = tmax;
+                tmax = temp;
+            }
 
-	if (tgmin > tgmax)
-		return -1;
+            if (tmin > min)
+                min = tmin;
+            if (tmax < max)
+                max = tmax;
+        }
+    }
 
-	if (tgmax < 0)
-		return tgmin;
+    if (min > max)
+        return -1;
 
-	if (tgmin > 0)
-		return tgmin;
-	else
-		return tgmax;
+    if (max < 0)
+        return -1;
+
+    if (min > 0)
+        return min;
+    else
+        return max;
 }
 
 AABB* Box::newAABB() {

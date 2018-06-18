@@ -6,25 +6,34 @@ Sphere::Sphere() {
 
 float Sphere::intersect(const Ray & ray)
 {
-	glm::vec3 dist = ray.position - center;
-	float A = dot(ray.direction, ray.direction);
-	float B = dot(ray.direction + ray.direction, dist);
-	float C = dot(dist, dist) - radius * radius;
-	float determinant = B * B - 4 * A*C;
+    const glm::vec3 offset = ray.position - center;
 
-	if (determinant < 0)
-		return -1;
+    const float a = glm::dot(ray.direction, ray.direction);
+    const float b = 2.f * glm::dot(ray.direction, offset);
+    const float c = glm::dot(offset, offset) - radius * radius;
 
-	determinant = sqrt(determinant);
-	float t1 = (-B + determinant) / (2 * A);
-	float t2 = (-B - determinant) / (2 * A);
+    const float discriminant = b * b - 4.f * a * c;
 
-	if (t1 > 0 && t2 > 0)
-		return std::min(t1, t2);
-	else if (t1 > 0 || t2 > 0)
-		return t1 > 0 ? t1 : t2;
+    if (discriminant >= 0.f)
+    {
+        const float sqrtDiscriminant = sqrt(discriminant);
 
-	return -1;
+        float numerator = -b - sqrtDiscriminant;
+
+        if (numerator < 0)
+        {
+            numerator = -b + sqrtDiscriminant;
+        }
+
+        const float t = numerator / (2.f * a);
+
+        if (t >= 0.f)
+        {
+            return t;
+        }
+    }
+
+    return -1;
 }
 
 AABB* Sphere::newAABB() {

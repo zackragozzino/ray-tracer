@@ -6,40 +6,40 @@ Triangle::Triangle() : GeomObject() {
 
 float Triangle::intersect(const Ray & ray)
 {
-	glm::mat3 aMat, bMat, gMat, tMat;
-	float detA, detB, detG, detT;
-	float beta, gamma, T;
+    const glm::vec3 abc = p1 - p2;
+    const glm::vec3 def = p1 - p3;
+    const glm::vec3 ghi = ray.direction;
+    const glm::vec3 jkl = p1 - ray.position;
 
-	aMat = 
-		glm::mat3(p1.x - p2.x, p1.x - p3.x, ray.direction.x,
-				  p1.y - p2.y, p1.y - p3.y, ray.direction.y,
-				  p1.z - p2.z, p1.z - p3.z, ray.direction.z);
-    bMat = 
-		glm::mat3(p1.x - ray.position.x, p1.x - p3.x, ray.direction.x,
-				  p1.y - ray.position.y, p1.y - p3.y, ray.direction.y,
-			      p1.z - ray.position.z, p1.z - p3.z, ray.direction.z);
-	gMat = 
-		glm::mat3(p1.x - p2.x, p1.x - ray.position.x, ray.direction.x,
-				  p1.y - p2.y, p1.y - ray.position.y, ray.direction.y,
-				  p1.z - p2.z, p1.z - ray.position.z, ray.direction.z);
-	tMat = 
-		glm::mat3(p1.x - p2.x, p1.x - p3.x, p1.x - ray.position.x,
-				  p1.y - p2.y, p1.y - p3.y, p1.y - ray.position.y,
-				  p1.z - p2.z, p1.z - p3.z, p1.z - ray.position.z);
+    const float ei_hf = def.y * ghi.z - ghi.y * def.z;
+    const float gf_di = ghi.x * def.z - def.x * ghi.z;
+    const float dh_eg = def.x * ghi.y - def.y * ghi.x;
 
-	detA = glm::determinant(aMat);
-	detB = glm::determinant(bMat);
-	detG = glm::determinant(gMat);
-	detT = glm::determinant(tMat);
+    const float denom = abc.x * ei_hf + abc.y * gf_di + abc.z * dh_eg;
 
-	beta = detB / detA;
-	gamma = detG / detA;
-	T = detT / detA;
+    if (denom == 0.f)
+        return -1;
 
-	if (beta < 0 || beta > 1 || gamma < 0 || gamma > 1 - beta)
-		return -1;
-	else
-		return T;
+    const float beta = (jkl.x * ei_hf + jkl.y * gf_di + jkl.z * dh_eg) / denom;
+
+    if (beta < 0 || beta > 1)
+        return -1;
+
+    const float ak_jb = abc.x * jkl.y - jkl.x * abc.y;
+    const float jc_al = jkl.x * abc.z - abc.x * jkl.z;
+    const float bl_kc = abc.y * jkl.z - jkl.y * abc.z;
+
+    const float gamma = (ghi.z * ak_jb + ghi.y * jc_al + ghi.x * bl_kc) / denom;
+
+    if (gamma < 0 || gamma > 1 - beta)
+        return -1;
+
+    const float t = (-def.z * ak_jb + -def.y * jc_al + -def.x * bl_kc) / denom;
+
+    if (t < 0)
+        return -1;
+
+    return t;
 }
 
 AABB* Triangle::newAABB() {

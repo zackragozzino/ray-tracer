@@ -59,108 +59,13 @@ void RenderSystem::renderStereogram(Scene & scene, int & width, int & height) {
 	const int numChannels = 3;
 	glm::vec3 color;
 
-	int patternDiv = 8;
+    int patternDiv = 8;
 	int patternWidth = size.x / patternDiv;
 
-	unsigned char *patternTex = new unsigned char[patternWidth * size.y * numChannels];
-	unsigned char *depthTex = new unsigned char[size.x * size.y * numChannels];
+
+    unsigned char *patternTex = generateNoise(size, patternWidth, numChannels);
+    unsigned char *depthTex = calculateDepthMap(scene, size, patternWidth, numChannels);
 	unsigned char *outTex = new unsigned char[size.x * size.y * numChannels];
-	std::vector<float> depthData;
-	srand(time(NULL));
-
-	float mod = 360.f / size.y;
-
-	int offset1 = (rand() / (float)RAND_MAX) * 300;
-	int offset2 = (rand() / (float)RAND_MAX) * 300;
-	int offset3 = (rand() / (float)RAND_MAX) * 300;
-
-
-	std::cout << "Generating random noise... " << std::endl;
-	//Generate random noise
-	for (int y = 0; y < size.y; ++y)
-	{
-		for (int x = 0; x < patternWidth; ++x)
-		{
-			float noise = rand() / (float)RAND_MAX;
-
-			float redVal =  round(reMap(sin(glm::radians(y * mod + offset1))) * 255.f);
-			float greenVal = round(reMap(sin(glm::radians(y * mod + offset2))) * 255.f);
-			float blueVal = round(reMap(sin(glm::radians(y * mod + offset3))) * 255.f);
-
-			//std::cout << redVal << " " << greenVal << " " << blueVal << std::endl;
-
-			color = glm::vec3(redVal, greenVal, blueVal);
-			color += glm::vec3(round(glm::clamp(noise, 0.f, 1.f) * 255.f));
-
-			//color = glm::vec3(round(glm::clamp(noise, 0.f, 1.f) * 255.f));
-
-			patternTex[(patternWidth * numChannels) * (size.y - 1 - y) + numChannels * x + 0] = color.r;
-			patternTex[(patternWidth * numChannels) * (size.y - 1 - y) + numChannels * x + 1] = color.g;
-			patternTex[(patternWidth * numChannels) * (size.y - 1 - y) + numChannels * x + 2] = color.b;
-		}
-	}
-
-	float min = std::numeric_limits<float>::max();
-	float max = std::numeric_limits<float>::lowest();
-
-	std::cout << "Getting intersections..." << std::endl;
-	//Store intersection info
-	for (int y = 0; y < size.y; ++y)
-	{
-		for (int x = 0; x < size.x; ++x)
-		{
-			Ray ray = scene.castRay(width, height, x, y, 0, 0, superSamples);
-			Hit hit(scene, ray);
-			
-			if (hit.hit && strcmp("Plane", hit.object->type.c_str())) {
-				depthData.push_back(hit.t_val);
-
-				if (hit.t_val > max)
-					max = hit.t_val;
-				if (hit.t_val < min)
-					min = hit.t_val;
-			}
-			else
-				depthData.push_back(-1.f);
-		}
-	}
-
-	/*
-	//Find min and max
-	int maxIndex = std::distance(depthData.begin(), std::max_element(depthData.begin(), depthData.end()));
-	float max = depthData.at(maxIndex);
-	std::cout << "Max: " << max << std::endl;
-
-	int minIndex = std::distance(depthData.begin(), std::min_element(depthData.begin(), depthData.end()));
-	float min = depthData.at(minIndex);
-	std::cout << "Min: " << min << std::endl;
-	*/
-
-	float oldRange = (min - max);
-	float newRange = 1;
-
-	std::cout << "Writing depth map..." << std::endl;
-	//Write depth map
-	for (int y = 0; y < size.y; ++y)
-	{
-		for (int x = 0; x < size.x; ++x)
-		{
-			color = glm::vec3(0);
-
-			float depthVal = depthData.at(y*size.x + x);
-			
-			//Check if non-intersection
-			if (depthVal == -1)
-				depthVal = max + 0.1f;
-
-			float depthValRemap = (((depthVal - max) * newRange) / oldRange);
-			color = glm::vec3(round(glm::clamp(depthValRemap, 0.f, 1.f) * 255.f));
-
-			depthTex[(size.x * numChannels) * (size.y - 1 - y) + numChannels * x + 0] = color.r;
-			depthTex[(size.x * numChannels) * (size.y - 1 - y) + numChannels * x + 1] = color.g;
-			depthTex[(size.x * numChannels) * (size.y - 1 - y) + numChannels * x + 2] = color.b;
-		}
-	}
 
 
 	//Perform offsets and write final image
@@ -193,12 +98,112 @@ void RenderSystem::renderStereogram(Scene & scene, int & width, int & height) {
 		stbi_write_png(fileName.c_str(), size.x, size.y, numChannels, depthTex, size.x * numChannels);
 	else
 		stbi_write_png(fileName.c_str(), size.x, size.y, numChannels, outTex, size.x * numChannels);
+        
+
 
 	delete[] patternTex;
 	delete[] depthTex;
 	delete[] outTex;
 
 	std::cout << "Done writing stereogram" << std::endl;
+}
+
+unsigned char* RenderSystem::generateNoise(glm::ivec2 size, int patternWidth, int numChannels) {
+    unsigned char *patternTex = new unsigned char[patternWidth * size.y * numChannels];
+    glm::vec3 color;
+    srand(time(NULL));
+
+    float mod = 360.f / size.y;
+
+    int offset1 = (rand() / (float)RAND_MAX) * 300;
+    int offset2 = (rand() / (float)RAND_MAX) * 300;
+    int offset3 = (rand() / (float)RAND_MAX) * 300;
+
+
+    std::cout << "Generating random noise... " << std::endl;
+    //Generate random noise
+    for (int y = 0; y < size.y; ++y)
+    {
+        for (int x = 0; x < patternWidth; ++x)
+        {
+            float noise = rand() / (float)RAND_MAX;
+
+            float redVal = round(reMap(sin(glm::radians(y * mod + offset1))) * 255.f);
+            float greenVal = round(reMap(sin(glm::radians(y * mod + offset2))) * 255.f);
+            float blueVal = round(reMap(sin(glm::radians(y * mod + offset3))) * 255.f);
+
+            //std::cout << redVal << " " << greenVal << " " << blueVal << std::endl;
+
+            color = glm::vec3(redVal, greenVal, blueVal);
+            color += glm::vec3(round(glm::clamp(noise, 0.f, 1.f) * 255.f));
+
+            //color = glm::vec3(round(glm::clamp(noise, 0.f, 1.f) * 255.f));
+
+            patternTex[(patternWidth * numChannels) * (size.y - 1 - y) + numChannels * x + 0] = color.r;
+            patternTex[(patternWidth * numChannels) * (size.y - 1 - y) + numChannels * x + 1] = color.g;
+            patternTex[(patternWidth * numChannels) * (size.y - 1 - y) + numChannels * x + 2] = color.b;
+        }
+    }
+    return patternTex;
+}
+
+unsigned char* RenderSystem::calculateDepthMap(Scene &scene, glm::ivec2 size, int patternWidth, int numChannels) {
+    unsigned char *depthTex = new unsigned char[size.x * size.y * numChannels];
+    glm::vec3 color;
+    std::vector<float> depthData;
+
+    float min = std::numeric_limits<float>::max();
+    float max = std::numeric_limits<float>::lowest();
+
+    std::cout << "Getting intersections..." << std::endl;
+    //Store intersection info
+    for (int y = 0; y < size.y; ++y)
+    {
+        for (int x = 0; x < size.x; ++x)
+        {
+            Ray ray = scene.castRay(size.x, size.y, x, y, 0, 0, superSamples);
+            Hit hit(scene, ray);
+
+            if (hit.hit && strcmp("Plane", hit.object->type.c_str())) {
+                depthData.push_back(hit.t_val);
+
+                if (hit.t_val > max)
+                    max = hit.t_val;
+                if (hit.t_val < min)
+                    min = hit.t_val;
+            }
+            else
+                depthData.push_back(-1.f);
+        }
+    }
+
+    float oldRange = (min - max);
+    float newRange = 1;
+
+    std::cout << "Writing depth map..." << std::endl;
+    //Write depth map
+    for (int y = 0; y < size.y; ++y)
+    {
+        for (int x = 0; x < size.x; ++x)
+        {
+            color = glm::vec3(0);
+
+            float depthVal = depthData.at(y*size.x + x);
+
+            //Check if non-intersection
+            if (depthVal == -1)
+                depthVal = max + 0.1f;
+
+            float depthValRemap = (((depthVal - max) * newRange) / oldRange);
+            color = glm::vec3(round(glm::clamp(depthValRemap, 0.f, 1.f) * 255.f));
+
+            depthTex[(size.x * numChannels) * (size.y - 1 - y) + numChannels * x + 0] = color.r;
+            depthTex[(size.x * numChannels) * (size.y - 1 - y) + numChannels * x + 1] = color.g;
+            depthTex[(size.x * numChannels) * (size.y - 1 - y) + numChannels * x + 2] = color.b;
+        }
+    }
+
+    return depthTex;
 }
 
 
@@ -214,23 +219,21 @@ glm::vec3 RenderSystem::calculateColor(Scene &scene, Ray &ray, int bounceCount)
 	if (hit.hit) {
 
 		glm::vec3 blinnPhongColor = calculateBlinnPhong(scene, hit, bounceCount);
-		//glm::vec3 reflectionColor = calculateReflection(scene, hit, bounceCount);
-		//glm::vec3 refractionColor = calculateRefraction(scene, hit, bounceCount);
+		glm::vec3 reflectionColor = calculateReflection(scene, hit, bounceCount);
+		glm::vec3 refractionColor = calculateRefraction(scene, hit, bounceCount);
 
-		//float fresnelReflectance = 0.f;
-		//if (fresnel)
-			//fresnelReflectance = calculateFresnel(hit);
+		float fresnelReflectance = 0.f;
+		if (fresnel)
+			fresnelReflectance = calculateFresnel(hit);
 
 		float localContribution = (1 - hit.object->finish.filter) * (1 - hit.object->finish.reflection);
-		//float reflectionContribution = (1 - hit.object->finish.filter) * hit.object->finish.reflection + (hit.object->finish.filter) * (fresnelReflectance);
-		//float refractionContribution = hit.object->finish.filter * (1 - fresnelReflectance);
+		float reflectionContribution = (1 - hit.object->finish.filter) * hit.object->finish.reflection + (hit.object->finish.filter) * (fresnelReflectance);
+		float refractionContribution = hit.object->finish.filter * (1 - fresnelReflectance);
 
 		color += blinnPhongColor * localContribution;
-		//color += reflectionColor * reflectionContribution;
-		//color += refractionColor * refractionContribution;
+		color += reflectionColor * reflectionContribution;
+		color += refractionColor * refractionContribution;
 	}
-	//else
-		//std::cout << "no hit " << bounceCount << std::endl;
 
 	return color;
 }
@@ -246,7 +249,7 @@ glm::vec3 RenderSystem::calculateBlinnPhong(Scene & scene, Hit & hit, int bounce
 	else {
 		color = hit.object->finish.ambient * hit.color;
 	}
-	/*
+	
 	for (Light *light : scene.lights) {
 		glm::vec3 lightDir = glm::normalize(light->location - hit.hitPos);
 		Ray lightRay(hit.hitPos, lightDir);
@@ -257,7 +260,7 @@ glm::vec3 RenderSystem::calculateBlinnPhong(Scene & scene, Hit & hit, int bounce
 			color += calculateSpecular(hit, *light);
 		}
 	}
-	*/
+	
 	return color;
 }
 
@@ -345,11 +348,9 @@ glm::vec3 RenderSystem::calculateGI(Scene & scene, Hit & hit, int bounceCount)
 	glm::mat4 matrix;
 	if (upVector == hit.normal) {
 		matrix = glm::mat4(1.f);
-		std::cout << "return sample" << std::endl;
 	}
 	else if (upVector == -hit.normal) {
 		matrix = glm::mat4(-1.f);
-		std::cout << "return negative sample" << std::endl;
 	}
 	else
 		matrix = glm::rotate(glm::mat4(1.0f), angle, axis);
@@ -357,7 +358,6 @@ glm::vec3 RenderSystem::calculateGI(Scene & scene, Hit & hit, int bounceCount)
 	float rootSamples = std::sqrt(numSamples);
 	float ratio = rootSamples / numSamples;
 
-	//std::cout << "trying " << std::endl;
 	// Stratified samples 
 	for (float x = 0.f; x <= numSamples; x += rootSamples) {
 		for (float y = 0.f; y <= numSamples; y += rootSamples) {
@@ -365,12 +365,11 @@ glm::vec3 RenderSystem::calculateGI(Scene & scene, Hit & hit, int bounceCount)
 			float gridY = y / numSamples + ratio * (rand() / (float)RAND_MAX);
 
 			glm::vec3 samplePt = calculateCosineWeightedPoint(gridX, gridY);
-			//samplePt = glm::vec3(matrix * glm::vec4(samplePt, 1.f));
+			samplePt = glm::vec3(matrix * glm::vec4(samplePt, 1.f));
 			Ray sampleRay(hit.hitPos + samplePt * 0.0001f, samplePt);
 			giColor += calculateColor(scene, sampleRay, bounceCount);
 		}
 	}
-	//std::cout << "done" << std::endl;
 
 	giColor *= 1 / (float)numSamples;
 
@@ -395,8 +394,6 @@ glm::vec3 RenderSystem::calculateBeers(Hit & hit, Hit & refractionHit)
 	float d = glm::distance(refractionHit.hitPos, hit.hitPos);
 	glm::vec3 absorbance = (1.f - hit.color) * (0.15f) * -d;
 	glm::vec3 attenuation = exp(absorbance);
-
-    //std::cout << attenuation.x << " " << attenuation.y << " " << attenuation.z << std::endl;
 
 	return attenuation;
 }

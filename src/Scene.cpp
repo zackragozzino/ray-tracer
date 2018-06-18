@@ -6,9 +6,6 @@ Scene::Scene() {
 
 Ray Scene::castRay(int width, int height, int x, int y, int ssM, int ssN, int superSamples) {
 
-	//float u = -0.5 + ((x + 0.5) / width);
-	//float v = -0.5 + ((y + 0.5) / height);
-
     float u = -0.5 + ((x + (ssM + 0.5) / superSamples)) / width;
     float v = -0.5 + ((y + (ssN + 0.5) / superSamples)) / height;
 
@@ -42,7 +39,6 @@ void Scene::recursiveTreeBuild(std::vector<GeomObject *> objects, int axis, bvh_
 	std::vector<GeomObject *> rightObjects(objects.begin() + objects.size() / 2, objects.end());
 	recursiveTreeBuild(rightObjects, (axis + 1) % 3, parent->right);
 
-	//parent->objs = objects;
 	instantiateAABB(parent);
 	
 }
@@ -64,35 +60,6 @@ void Scene::instantiateAABB(bvh_node* parent) {
 }
 
 void Scene::sort(std::vector<GeomObject *> &objects, int axis) {
-	// Selection sort
-	for (unsigned int i = 0; i < objects.size(); i++) {
-		glm::vec3 icen = glm::vec3(objects[i]->ModelMatrix * glm::vec4(objects[i]->getCenter(), 1.f));
-
-		unsigned int min = i;
-		unsigned int j = i + 1;
-		for (j=0; j < objects.size(); j++) {
-			glm::vec3 jcen = glm::vec3(objects[j]->ModelMatrix * glm::vec4(objects[j]->getCenter(), 1.f));
-			if (jcen[axis] < icen[axis]) {
-				min = j;
-			}
-		}
-		if (min != i) {
-			GeomObject* temp = objects[i];
-			objects[i] = objects[min];
-			objects[min] = temp;
-		}
-	}
-	
-	/*
-	std::cout << "\n---------------------------" << std::endl;
-	for (int i = 0; i < objects.size(); i++) {
-		glm::vec3 icen = glm::vec3(objects[i]->ModelMatrix * glm::vec4(objects[i]->getCenter(), 1.f));
-		std::cout << "Type: " << objects[i]->type.c_str() << "- " << glm::to_string(icen) << std::endl;
-		//std::cout << "Matrix: " << glm::to_string(objects[i]->ModelMatrix) << std::endl;
-	}
-	*/
-
-	/*
 	//Insertion sort based on online pseudocode
 	int i, j;
 	GeomObject * key;
@@ -101,14 +68,13 @@ void Scene::sort(std::vector<GeomObject *> &objects, int axis) {
 		key = objects[i];
 		j = i - 1;
 
-		while (j >= 0 && objects[j]->center[axis] > key->center[axis])
+		while (j >= 0 && objects[j]->getCenter()[axis] > key->getCenter()[axis])
 		{
 			objects[j + 1] = objects[j];
 			j = j - 1;
 		}
 		objects[j + 1] = key;
 	}
-	*/
 }
 
 void Scene::printTree(bvh_node *node, std::string type) {
@@ -134,17 +100,8 @@ void Scene::printTree(bvh_node *node, std::string type) {
 }
 
 HitObject* Scene::traverseTree(bvh_node *node, Ray &ray) {
-	/*
-	std::cout << "~~~ Objects ~~~" << std::endl;
-	std::cout << "Size: " << node->objs.size() << std::endl;
-	for (int i = 0; i < node->objs.size(); i++) {
-		std::cout << node->objs[i]->type.c_str() << std::endl;
-	}
-	std::cout << "~~~~~~~~~~~~" << std::endl;
-	*/
 	
 	// Base Case
-
 
     if (node->objs.size() == 1) {
 		glm::vec3 p = glm::vec3(node->objs[0]->invModelMatrix * glm::vec4(ray.position, 1));
