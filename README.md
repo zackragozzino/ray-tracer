@@ -8,6 +8,10 @@ https://developer.nvidia.com/gpugems/GPUGems/gpugems_ch41.html
 https://www.ime.usp.br/~otuyama/stereogram/basic/index.html
 For debugging purposes, the "-dm" enables depthmap rendering, which translates .pov files into a 2D depth map.
 
+![alt text](https://github.com/zackragozzino/ray-tracer/blob/master/Output_Images/mickey_SIS.png)
+![alt text](https://github.com/zackragozzino/ray-tracer/blob/master/Output_Images/valentine_SIS.png)
+![alt text](https://github.com/zackragozzino/ray-tracer/blob/master/Output_Images/saturn_SIS.png)
+
 Optimization:
 My major optimization came from reducing the number of times I calculate intersections.
 I created a class called "HitObject" that holds a reference to the intersected object of a hit,
